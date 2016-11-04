@@ -34,6 +34,7 @@ void conv_kTog(char *file_out)
 	sprintf(word, "%f", val);
     
 	//6. Write to output file
+	strcat(word, " ");
 	write(fd, word, strlen(word));
 
 	//error
