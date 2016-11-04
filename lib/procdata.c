@@ -1,0 +1,57 @@
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+#include <errno.h>
+#include <unistd.h>
+
+#include "parser.h"
+#include "procdata.h"
+
+
+void conv_kTog(char *file_out)
+{
+    int fd;
+    float val;
+    char word[100];
+    
+    //1. open file
+    fd = newFile(file_out);
+
+    while(1) {
+
+	//2. read word
+	if( readWord(word) == 0 )
+	    break;
+
+	//3. Convert string to float
+	val = atof(word);
+    
+	//4. convert kilo to gram
+	val = val / 1000;
+    
+	//5. convert float to string
+	sprintf(word, "%f", val);
+    
+	//6. Write to output file
+	write(fd, word, strlen(word));
+
+	//error
+    }
+
+    close(fd);
+}
+
+void conversion(char *option, char *file_out)
+{
+    //Case 1: conversion kilgo to gram
+    if( !(strcmp(option, "ktog")) ) {
+	conv_kTog(file_out);
+    }
+
+    //Case : 2 ..
+    
+    //Case : 3 ..
+
+    //....
+}
