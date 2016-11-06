@@ -4,7 +4,7 @@ LIB = datapro
 LIB_DIR = ../lib
 INC_DIR = ../inc
 OBJS = main.o
-INCS = $(INC_DIR)/procdata.h
+INCS = $(INC_DIR)/convdata.h $(INC_DIR)/compdata.h
 
 $(OUTPUT): $(OBJS)
 	$(CC) -L$(LIB_DIR) $(OBJS) -l$(LIB) -o $(OUTPUT)

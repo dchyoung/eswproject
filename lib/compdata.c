@@ -1,0 +1,20 @@
+/*
+  Module: Any data computation function.
+ */
+
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+#include <errno.h>
+#include <unistd.h>
+
+#include "parser.h"
+#include "compdata.h"
+
+//Compute 1:
+
+//Compute 2:
+
+
+//Compute 3:
