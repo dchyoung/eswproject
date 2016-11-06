@@ -28,6 +28,7 @@ void conversion(char *option, char *file_out)
 }
 
 //Conversion function 1: Convert kilo to gram
+//For iniitial test. Needs update
 void conv_kTog(char *file_out)
 {
     int fd;
