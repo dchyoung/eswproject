@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
     //Else 1st option is to compute
     else if( !(strcmp(argv[1], "-comp")) ) {
 	//Call computation module with suboptions and output filename
-	//computation(argv[2], argv[3]);
+	computation(argv[2], argv[3]);
     }
 
     //Else invalid command format
