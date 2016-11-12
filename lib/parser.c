@@ -80,3 +80,22 @@ int readWord(char *word)
 	}
     }
 }
+
+void fToStr(float val, int n, char *str)
+{
+    char format[100];
+    char buf[100];
+        
+    sprintf(buf, "%d", n);
+
+    //Make format string
+    strcpy(format, "%.");
+    strcat(format, buf);
+    strcat(format, "f");
+
+    //Convert float to str
+    sprintf(str, format, val);
+
+    //spacing
+    strcat(str, " ");      
+}

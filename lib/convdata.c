@@ -27,6 +27,7 @@ void conversion(char *option, char *file_out)
     //....
 }
 
+
 //Conversion function 1: Convert kilo to gram
 //For iniitial test. Needs update
 void conv_kTog(char *file_out)
@@ -52,10 +53,10 @@ void conv_kTog(char *file_out)
 	val = val * 1000;
     
 	//5. convert float to string
-	sprintf(word, "%f", val);
-    
-	//6. Write to output file
-	strcat(word, " ");
+	
+	fToStr(val, 2, word);
+	
+	//6. Write to outputfile
 	n = write(fd, word, strlen(word));
 
 	//7. error
