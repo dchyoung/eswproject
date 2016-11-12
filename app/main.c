@@ -9,8 +9,8 @@
 
   -Proper argument format examples:
    >>datamaster -(1st option) sub-option output_file_name
-   >>datamaster -conv         ktog       dataoutput.txt
-   >>datamaster -comp         mean       dataoutput.txt
+   >>datamaster -conv         ktog       dataoutput.txt     #ofdigitAfterPoint
+   >>datamaster -comp         mean       dataoutput.txt     #ofdigitAfterPoint
  */
 
 
@@ -27,14 +27,32 @@ int main(int argc, char *argv[])
     //If 1st option is to convert
     if( !(strcmp(argv[1], "-conv")) ) {
 	//Call conversion module with suboptions and  output filename
-	conversion(argv[2], argv[3]);
+	if( argc == 5 ) {
+	    
+	    int floatDigit;            //number of digits after the point
+
+	    floatDigit = atoi(argv[4]);
+
+	    conversion(argv[2], floatDigit, argv[3]);
+	    
+	}
+	else
+	    conversion(argv[2], 2, argv[3]);//default 2 digits after the point
 	
     }
 
     //Else 1st option is to compute
     else if( !(strcmp(argv[1], "-comp")) ) {
 	//Call computation module with suboptions and output filename
-	computation(argv[2], argv[3]);
+	if( argc == 5 ) {
+	    int floatDigit;
+
+	    floatDigit = atoi(argv[4]);
+	    
+	    computation(argv[2], floatDigit, argv[3]);
+	}
+	else
+	    computation(argv[2], 2, argv[3]); 
     }
 
     //Else invalid command format

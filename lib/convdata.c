@@ -13,11 +13,11 @@
 #include "convdata.h"
 
 //master function that calls corresponding data conversion function
-void conversion(char *option, char *file_out)
+void conversion(char *option, int floatDigit, char *file_out)
 {
     //Conversion 1: conversion kilgo to gram
     if( !(strcmp(option, "ktog")) ) {
-	conv_kTog(file_out);
+	conv_kTog(floatDigit, file_out);
     }
 
     //Conversion 2:
@@ -30,7 +30,7 @@ void conversion(char *option, char *file_out)
 
 //Conversion function 1: Convert kilo to gram
 //For iniitial test. Needs update
-void conv_kTog(char *file_out)
+void conv_kTog(int floatDigit, char *file_out)
 {
     int fd;
     float val;
@@ -54,7 +54,7 @@ void conv_kTog(char *file_out)
     
 	//5. convert float to string
 	
-	fToStr(val, 2, word);
+	fToStr(val, floatDigit, word);
 	
 	//6. Write to outputfile
 	n = write(fd, word, strlen(word));

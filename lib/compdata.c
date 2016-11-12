@@ -13,11 +13,11 @@
 #include "compdata.h"
 
 //master function that calls corresponding data conversion function
-void computation(char *option, char *file_out)
+void computation(char *option, int floatDigit, char *file_out)
 {
     //Computation 1: computation selecting data
     if( !(strcmp(option, "mean")) ) {
-	comp_mean(file_out);
+	comp_mean(floatDigit, file_out);
     }
 
     //Conversion 2:
@@ -29,7 +29,7 @@ void computation(char *option, char *file_out)
 
 //Computation 1 : Compute selecting data
 //For iniitial test. Needs update
-void comp_mean(char *file_out)
+void comp_mean(int floatDigit, char *file_out)
 {
     int fd;
     int mean;
