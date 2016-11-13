@@ -100,3 +100,25 @@ void fToStr(float val, int n, char *str)
     //spacing
     strcat(str, " ");      
 }
+
+int parseToken(int idx, char* str, char* token, char delim)
+{
+    int i, j;
+
+    //skip first delim
+    for( i = 0; i < strlen(str); i++ ) {
+	if( str[i] != delim )
+	    break;	
+    }
+
+    //copy token
+    j = 0;
+    while( i < strlen(str) ) {
+	token[j++] = str[i++];
+
+	if(str[i] == delim)
+	    break;
+	
+    }
+    return i;
+}

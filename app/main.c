@@ -9,7 +9,7 @@
 
   -Proper argument format examples:
    >>datamaster -(1st option) sub-option output_file_name
-   >>datamaster -conv         ktog       numOfDigits     dataoutput.txt     
+   >>datamaster -conv         k-g        numOfDigits     dataoutput.txt     
    >>datamaster -comp         mean       numOfDigits     dataoutput.txt     
  */
 
