@@ -36,8 +36,11 @@ int main(int argc, char *argv[])
 	    conversion(argv[2], floatDigit, argv[4]);
 	    
 	}
-	else
+	else {
+		printf("main convcall\n");
 	    conversion(argv[2], 2, argv[3]);//default 2 digits after the point
+	
+	}
 	
     }
 

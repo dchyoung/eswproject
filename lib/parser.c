@@ -106,7 +106,7 @@ int parseToken(int idx, char* str, char* token, char delim)
     int i, j;
 
     //skip first delim
-    for( i = 0; i < strlen(str); i++ ) {
+    for( i = idx; i < strlen(str); i++ ) {
 	if( str[i] != delim )
 	    break;	
     }
@@ -114,10 +114,15 @@ int parseToken(int idx, char* str, char* token, char delim)
     //copy token
     j = 0;
     while( i < strlen(str) ) {
-	token[j++] = str[i++];
+	token[j] = str[i];
+	j++;
+	i++;
 
-	if(str[i] == delim)
+	if(str[i] == delim || str[i] == '\0')
+	{
+	    token[j] = '\0';
 	    break;
+	}
 	
     }
     return i;
