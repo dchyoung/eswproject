@@ -9,8 +9,8 @@
 
   -Proper argument format examples:
    >>datamaster -(1st option) sub-option output_file_name
-   >>datamaster -conv         ktog       dataoutput.txt     #ofdigitAfterPoint
-   >>datamaster -comp         mean       dataoutput.txt     #ofdigitAfterPoint
+   >>datamaster -conv         ktog       numOfDigits     dataoutput.txt     
+   >>datamaster -comp         mean       numOfDigits     dataoutput.txt     
  */
 
 
@@ -31,9 +31,9 @@ int main(int argc, char *argv[])
 	    
 	    int floatDigit;            //number of digits after the point
 
-	    floatDigit = atoi(argv[4]);
+	    floatDigit = atoi(argv[3]);
 
-	    conversion(argv[2], floatDigit, argv[3]);
+	    conversion(argv[2], floatDigit, argv[4]);
 	    
 	}
 	else
@@ -47,9 +47,9 @@ int main(int argc, char *argv[])
 	if( argc == 5 ) {
 	    int floatDigit;
 
-	    floatDigit = atoi(argv[4]);
+	    floatDigit = atoi(argv[3]);
 	    
-	    computation(argv[2], floatDigit, argv[3]);
+	    computation(argv[2], floatDigit, argv[4]);
 	}
 	else
 	    computation(argv[2], 2, argv[3]); 
