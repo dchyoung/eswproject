@@ -35,10 +35,9 @@ void computation(char *option, int floatDigit, char *file_out)
 void comp_mean(int floatDigit, char *file_out)
 {
     int fd;
-    int mean;
     int i = 0;
     float sum = 0;
-    float val;
+    float val, mean;
     char word[100];
     
     //1. open file
@@ -62,11 +61,11 @@ void comp_mean(int floatDigit, char *file_out)
     //5. convert float to string
     if (i != 0){
      int n;
-     sprintf(word, "%f", val);
+     mean = sum / i;
+     sprintf(word, "%f", mean);
 
      //6. Write to output file
      strcat(word, "");
-     mean = sum / i;
      n = write(fd, word, strlen(word));
 
      //7. error_1
@@ -93,47 +92,39 @@ void comp_prob(int floatDigit, char *file_out)
     int fd, n;
     int i = 0;
     float prob;
-    float val;
     char word[100];
     
     //1. open file
     fd = newFile(file_out);
 
     while(1) {
+     if( readWord(word) == 0 )
+     break;
+
+     //3. compute counting of all data
+     i = i + 1;
+    }
+
+    while(i != 0) {
 
      //2. read word
      if( readWord(word) == 0 )
       break;
 
-      while(1) {
-       //3. compute counting of all data
-       i = i + 1;
-       }
+     //4. Convert string to float & convert float to strin
 
-     //4. Convert string to float & convert float to string
-     if (i != 0){
-      int n;
-      val = atof(word);
-      prob = val / i;
-      sprintf(word, "%f", prob);
+     prob = atof(word);
+     prob = prob / i;
+     fToStr(prob, floatDigit, word);;
 
-      //5. Write to output file
-      strcat(word, "");
-      n = write(fd, word, strlen(word));
-     }
-
-     //7. error_2
-     else if ( i == 0 ) {
-      perror("Null data");
-      exit(errno);
-     }
+     //5. Write to output file
+     n = write(fd, word, strlen(word));
 
      //6. error_1
      if(n == -1) {
       perror("write error");
       exit(errno);
      }
-
     }
 
     close(fd);
