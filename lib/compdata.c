@@ -36,8 +36,8 @@ void comp_mean(int floatDigit, char *file_out)
 {
     int fd;
     int i = 0;
-    float sum = 0;
-    float val, mean;
+    double sum = 0;
+    double val, mean;
     char word[100];
     
     //1. open file
