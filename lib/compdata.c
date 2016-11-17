@@ -62,10 +62,11 @@ void comp_mean(int floatDigit, char *file_out)
     if (i != 0){
      int n;
      mean = sum / i;
-     sprintf(word, "%f", mean);
-
-     //6. Write to output file
-     strcat(word, "");
+	 
+	 //Convert mean to string
+	 fToStr(mean, floatDigit, word); 
+	 
+	 //write mean to file
      n = write(fd, word, strlen(word));
 
      //7. error_1
