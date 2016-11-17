@@ -82,7 +82,7 @@ int readWord(char *word)
     }
 }
 
-void fToStr(float val, int n, char *str)
+void fToStr(double val, int n, char *str)
 {
     char format[100];
     char buf[100];
