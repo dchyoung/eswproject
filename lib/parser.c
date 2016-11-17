@@ -32,7 +32,7 @@ int isWhiteChar(char c)
 }
 
 //Get word to word buffer and return the length
-int readWord(char *word)
+int readWord(char *word, int fstream)
 {
     int i = 0;
     char c;
@@ -40,7 +40,7 @@ int readWord(char *word)
 
     //Skip first white characters
     while(1) {
-	n = read(STDIN_FILENO, &c, 1);
+	n = read(fstream, &c, 1);
 
 	//Read Error
 	if( n == -1 ) {
@@ -66,7 +66,7 @@ int readWord(char *word)
 	//copy character to word
 	word[i++] = c;
 	 
-	n = read(STDIN_FILENO, &c, 1);
+	n = read(fstream, &c, 1);
 
 	//read error
 	if( n == -1 ) {

@@ -197,7 +197,7 @@ void conv_mass(int unit_1_idx, int unit_2_idx, int floatDigit, char* file_out)
 	int n;
 	
 	//2. read word
-	if( readWord(word) == 0 )
+	if( readWord(word, STDIN_FILENO) == 0 )
 	    break;
 
 	//3. Convert string to float
