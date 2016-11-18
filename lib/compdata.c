@@ -46,7 +46,7 @@ void comp_mean(int floatDigit, char *file_out)
     while(1) {
 
      //2. read word
-     if( readWord(word) == 0 )
+     if( readWord(word, STDIN_FILENO) == 0 )
       break;
 
      //3. Convert string to float
@@ -90,32 +90,49 @@ void comp_mean(int floatDigit, char *file_out)
 //For initial test. Needs update
 void comp_prob(int floatDigit, char *file_out)
 {
-    int fd, n;
+    int fd, fd_tmp, n;
     int i = 0;
-    float prob;
+    double prob;
     char word[100];
     
     //1. open file
     fd = newFile(file_out);
+	
+	fd_tmp = newFile("tmp");	//temporary file
 
+	//copy to temporary file
     while(1) {
-     if( readWord(word) == 0 )
+    
+	if( readWord(word, STDIN_FILENO) == 0 )
      break;
 
-     //3. compute counting of all data
+     //3. Count
+	 n = write(fd_tmp, word, strlen(word));
+	 if(n == -1) {
+      perror("write error");
+      exit(errno);
+     }
      i = i + 1;
+	 
     }
-
+	if( i > 0) {
+		close(fd_tmp);
+	}
+	
+	//open tmp file
+	fd_tmp = open("tmp", O_RDONLY);
+	
     while(i != 0) {
 
      //2. read word
-     if( readWord(word) == 0 )
+     if( readWord(word, fd_tmp) == 0 )
       break;
 
      //4. Convert string to float & convert float to strin
 
      prob = atof(word);
      prob = prob / i;
+	 
      fToStr(prob, floatDigit, word);;
 
      //5. Write to output file
@@ -129,6 +146,7 @@ void comp_prob(int floatDigit, char *file_out)
     }
 
     close(fd);
+	close(fd_tmp);
 }
 
 
