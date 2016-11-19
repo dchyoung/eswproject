@@ -1,5 +1,6 @@
 #ifndef PARSER_H
 #define PARSER_H
+#define BUFLEN 100
 
 int newFile(char *filename);
 int isWhiteChar(char c);

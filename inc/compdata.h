@@ -5,11 +5,13 @@
 #ifndef COMPDATA_H
 #define COMPDATA_H
 
-void comp_mean(int floatDigit, char *file_out);
 
-void comp_prob(int floatDigit, char *file_out);
-
+//Master Index Function
 void computation(char *option, int floatDigit, char *file_out);
 
+//Function1: Compute mean
+void comp_mean(int floatDigit, char *file_out);
+//Function2: Compute weighted value
+void comp_prob(int floatDigit, char *file_out);
 
 #endif
