@@ -28,7 +28,8 @@ void computation(char *option, int floatDigit, char *file_out)
 	comp_prob(floatDigit, file_out);
     }
     
-    //Conversion 3:
+    //Conversion 3: Value Frequency Count (Histogram)
+    
 
     //....
 }

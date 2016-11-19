@@ -10,6 +10,8 @@
 
 #include "parser.h"
 
+
+//Open and return new file
 int newFile(char *filename)
 {
     int fd;
@@ -23,6 +25,7 @@ int newFile(char *filename)
     return fd;    
 }
 
+//If space, newline, or tab, return 1, else 0.
 int isWhiteChar(char c)
 {
     if( c == ' ' || c == '\n' || c == '\t' ) {
@@ -31,7 +34,7 @@ int isWhiteChar(char c)
     else return 0;
 }
 
-//Get word to word buffer and return the length
+//Get word from fstream, copy to *word buffer, and return the length
 int readWord(char *word, int fstream)
 {
     int i = 0;
@@ -82,6 +85,7 @@ int readWord(char *word, int fstream)
     }
 }
 
+//convert float value to string by n decimal point digit
 void fToStr(double val, int n, char *str)
 {
     char format[100];
@@ -101,6 +105,7 @@ void fToStr(double val, int n, char *str)
     strcat(str, " ");      
 }
 
+//Parse token from string by delim character, copy to char* token
 int parseToken(int idx, char* str, char* token, char delim)
 {
     int i, j;
@@ -118,8 +123,7 @@ int parseToken(int idx, char* str, char* token, char delim)
 	j++;
 	i++;
 
-	if(str[i] == delim || str[i] == '\0')
-	{
+	if(str[i] == delim || str[i] == '\0'){
 	    token[j] = '\0';
 	    break;
 	}
