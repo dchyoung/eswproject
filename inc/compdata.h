@@ -13,5 +13,7 @@ void computation(char *option, int floatDigit, char *file_out);
 void comp_mean(int floatDigit, char *file_out);
 //Function2: Compute weighted value
 void comp_prob(int floatDigit, char *file_out);
+//Function3: Histogram
+void comp_hist(int distance, int floatDigit, char *file_out);
 
 #endif

@@ -20,7 +20,6 @@ void conversion(char* option, int floatDigit, char* file_out)
     char unit_2[5]; 
     
     //Parse each unit of convert from/to from option string 
-    idx = 0;
     idx = parseToken(idx, option, unit_1, '-');
     parseToken(idx, option, unit_2, '-');
 

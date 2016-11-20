@@ -9,13 +9,20 @@
 
   -Proper argument format examples:
    >>datamaster -(1st option) sub-option output_file_name
-   >>datamaster -conv         k-g        numOfDigits     dataoutput.txt     
-   >>datamaster -comp         mean       numOfDigits     dataoutput.txt     
+
+   Conversions:
+   >>datamaster -conv         k-g        numOfDigits     dataoutput.txt
+
+   Computations:
+   >>datamaster -comp         mean       numOfDigits     dataoutput.txt  
+   >>datamster  -comp         prob       numOfDigits     dataoutput.txt
+   >>datamaster -comp         hist-10    numOfDigits     dataoutput.txt
  */
 
 
 int main(int argc, char *argv[])
 {
+     
     //1. Check number of arguments
     
     if( argc < 4 ){
@@ -44,6 +51,7 @@ int main(int argc, char *argv[])
 	
     }
 
+  
     //Else 1st option is to compute
     else if( !(strcmp(argv[1], "-comp")) ) {
 	//Call computation module with suboptions and output filename
@@ -57,6 +65,7 @@ int main(int argc, char *argv[])
 	else
 	    computation(argv[2], 2, argv[3]); 
     }
+    
 
     //Else invalid command format
     else {

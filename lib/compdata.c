@@ -18,17 +18,38 @@
 //Master function that calls corresponding data conversion function
 void computation(char *option, int floatDigit, char *file_out)
 {
+    int idx = 0;
+    char suboption[BUFLEN];
+        
+    //Parse each unit of convert from/to from option string 
+    idx = parseToken(idx, option, suboption, '-');
+        
     //Computation 1: Compute mean
-    if( !(strcmp(option, "mean")) ) {
+    if( !(strcmp(suboption, "mean")) ) {
 	comp_mean(floatDigit, file_out);
     }
 
-    //Conversion 2: Compute weighting of each value
-    if( !(strcmp(option, "prob")) ) {
+    //Computation 2: Compute weighting of each value
+    else if( !(strcmp(suboption, "prob")) ) {
 	comp_prob(floatDigit, file_out);
     }
     
-    //Conversion 3: Value Frequency Count (Histogram)
+    //Computation 3: Value Frequency Count (Histogram)
+    else if( !(strcmp(suboption, "hist")) ) {
+	
+	idx = parseToken(idx, option, suboption, '-');
+
+	if( idx > 4 ) {
+	    printf("suboption : %s, vlaue : %d\n", suboption, atoi(suboption));
+	    comp_hist(atoi(suboption), floatDigit, file_out);
+	}
+	else {
+	    printf("Invalid hist option. Need interval n:  hist-n\n");
+	}
+	
+	
+        
+    }
     
 
     //....
@@ -89,7 +110,6 @@ void comp_mean(int floatDigit, char *file_out)
 }
 
 //Compute 2: Compute all data
-//For initial test. Needs update
 void comp_prob(int floatDigit, char *file_out)
 {
     int fd, fd_tmp, n;
@@ -157,5 +177,152 @@ void comp_prob(int floatDigit, char *file_out)
 }
 
 
-//Compute 3:
+//Computation 3: Frequency count (Histogram)
+
+void comp_hist(int distance, int floatDigit, char *file_out)
+{
+    char word[BUFLEN];
+    int fd, fd_tmp;
+    int idx, n;
+    int* hist;
+    double max, min, value;
+    
+    //1. open file to write
+    fd = newFile(file_out);
+
+    //2. open temporary file
+    fd_tmp = newFile("tmp");
+
+    
+    if ( readWord(word, STDIN_FILENO) > 0 ) {
+
+	//Max and min initial value
+	max = atof(word);
+	min = max;
+
+	//Copy to tmp file
+	strcat(word, " ");//Spacing each word
+	if(  write(fd_tmp, word, strlen(word)) == -1 ) {
+	    perror("write error");
+	    exit(errno);
+	}
+
+
+	//3. Find max and min
+	while(1) {
+
+	    //read data value
+	    if( readWord(word, STDIN_FILENO) == 0 )
+		break;
+
+	    value = atof(word);
+
+	    //update max and min
+	    if( value > max ) {
+		max = value;
+	    }
+
+	    if( value < min ) {
+		min = value;
+	    }
+
+	    //copy to tmp file
+	    strcat(word, " ");         //Spacing each word
+	    if(  write(fd_tmp, word, strlen(word)) == -1 ) {
+		perror("write error");
+		exit(errno);
+	    }
+
+	}
+	//4. Copy finished. Close tmp file
+	close(fd_tmp);
+
+	//5. Histogram intervals based on given distance and max/min value
+	n = (int) ((max - min) / distance);
+
+	if( n == 0) 
+	    n = 1;
+	
+	printf("n vlaue : %d\n", n );
+	//Array allocation for counting table. index nth =  frequency of interval nth
+	hist = (int*)malloc(sizeof(int) * n); 
+
+	//Array initialization
+	for(idx = 0; idx < n; idx++) {
+	    hist[idx] = 0;
+	}
+	
+	//5. Open tmp file and Count frequency for each interval
+	fd_tmp = open("tmp", O_RDONLY);
+
+	//frequency count
+	while(1) {
+
+	    //read word
+	    if( readWord(word, fd_tmp) == 0 )
+		break;
+
+	    //Convert string to float 
+	    value = atof(word);
+
+	    idx = (int) ((value - min) / distance);
+
+	    hist[idx] = hist[idx] + 1;
+	}
+
+	//Array initialization
+	for(idx = 0; idx < n; idx++) {
+	    printf("%d\n", hist[idx]);
+	}
+
+	
+	//6. write result
+	for(idx = 0; idx < n; idx++){
+
+	    //write interval
+
+	    //Interval from:
+	    value = min + distance * idx;
+	    	    
+	    fToStr(value, floatDigit, word);
+	    strcat(word, " ~ ");
+	    
+	    if( write(fd, word, strlen(word)) == -1 ) {
+	        perror("write error");
+		exit(errno);
+	    }
+
+	    //Interval to:
+	    value = min * distance * (idx + 1);
+	    fToStr(value, floatDigit, word);
+	    strcat(word, " : ");
+	    
+	    if( write(fd, word, strlen(word)) == -1 ) {
+	        perror("write error");
+		exit(errno);
+	    }
+
+	    //Write frequency of the interval:
+	    fToStr(hist[idx],0, word);
+	    strcat(word, "\n");
+	    if( write(fd, word, strlen(word)) == -1 ) {
+		perror("write error");
+		exit(errno);	
+	    }
+	    
+	}
+	
+	free(hist);
+	//close files
+	close(fd);
+	close(fd_tmp);
+	
+	//remove temporary file
+	remove("tmp");
+	
+    }
+
+    return;    
+}
+
 
