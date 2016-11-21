@@ -325,4 +325,69 @@ void comp_hist(int distance, int floatDigit, char *file_out)
     return;    
 }
 
+//Computation 4: Standard deviation
+void comp_stdde(int floatDigit, char *file_out)
+{
+    int fd, fd_tmp, n;
+    int i = 0;
+    double prob;
+    char word[BUFLEN];
+    
+    //1. open file to write
+    fd = newFile(file_out);
 
+    //2. open temporary file
+    fd_tmp = newFile("tmp");
+
+    //3. Count data and Copy from std input stream  to temporary file
+    while(1) {
+    
+	if( readWord(word, STDIN_FILENO) == 0 )
+	    break;
+	
+	strcat(word, " ");//Spacing each word
+	n = write(fd_tmp, word, strlen(word));
+
+	if(n == -1) {
+	    perror("write error");
+	    exit(errno);
+	}
+	i = i + 1;	 
+    }
+    if( i > 0) {
+	close(fd_tmp);
+    }
+	
+    //4. Open tmp file
+    fd_tmp = open("tmp", O_RDONLY);
+	
+    while(i != 0) {
+
+	//read word
+	if( readWord(word, fd_tmp) == 0 )
+	    break;
+
+	//Convert string to float 
+	prob = atof(word);
+
+	//Compute weighted value
+	prob = prob / i;
+
+	//Convert double to string
+	fToStr(prob, floatDigit, word);;
+
+	//Write to output file
+	n = write(fd, word, strlen(word));
+
+	//Write error
+	if(n == -1) {
+	    perror("write error");
+	    exit(errno);
+	}
+    }
+
+    close(fd);
+    close(fd_tmp);
+    //remove temporary file
+    remove("tmp");
+}
