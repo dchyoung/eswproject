@@ -17,9 +17,11 @@ void conversion(char* option, int floatDigit, char* file_out)
 {
     int idx = 0, unit_1_idx, unit_2_idx;
     char unit_1[5];
-    char unit_2[5]; 
+    char unit_2[5];
+    double convFactor;
     
-    //Parse each unit of convert from/to from option string 
+    //Parse each unit of convert from/to from option string
+    //Each unit is seperated by '-' character
     idx = parseToken(idx, option, unit_1, '-');
     parseToken(idx, option, unit_2, '-');
 
@@ -27,15 +29,33 @@ void conversion(char* option, int floatDigit, char* file_out)
     unit_1_idx = get_unit_idx(unit_1);
     unit_2_idx = get_unit_idx(unit_2);
     
-    //Unit index between 0 and 5: mass unit    
-    if( unit_1_idx >= 0 && unit_2_idx < 6  ) {
+    //Conversion 1: Unit index between 0 and 5: Conventional mass unit    
+    if( (unit_1_idx >= 0 && unit_1_idx < 6) &&
+	(unit_2_idx >= 0 && unit_2_idx < 6) )
+    {	
+	//Get conversion scale factor for the units
+	convFactor = get_convFactor_mass(unit_1_idx, unit_2_idx);
+	
 	//Call mass conversion
-	conv_mass(unit_1_idx, unit_2_idx, floatDigit, file_out);
+	_convert(convFactor, floatDigit, file_out);
     }
 
-    //Conversion 2:
-    
+    //Conversion 2: Unit Index number between 6 and 22: Metric Unit Conversion
+    else if( (unit_1_idx >= 6 && unit_1_idx < 23) &&
+	(unit_2_idx >= 6 && unit_2_idx < 23) )
+    {
+	//Get conversion scale factor for the units
+	convFactor = get_convFactor_metric(unit_1_idx, unit_2_idx);
+	_convert(unit_1_idx, unit_2_idx, floatDigit, file_out);
+    }
+    else {
+	printf("Invalid Unit.\n");
+	exit(0);
+    }
+
     //Conversion 3:
+    
+    //Conversion 4:
 
     //....
 }
@@ -43,10 +63,18 @@ void conversion(char* option, int floatDigit, char* file_out)
 
 int get_unit_idx(char* unit)
 {
-    char* unit_table[6] = {"mcg", "mg", "g", "kg", "lb", "oz"};
+    char* unit_table[17] = {
+	//Conventional Mass Unit
+	"mcg", "mg", "g", "kg", "lb", "oz",
+	//Metric Unit
+        "atto", "femto", "pico", "nano", "micro", "milli", "centi", "deci",
+	"none", "deca", "hecto", "kilo", "mega", "giga", "tera", "peta", "exa"
+	//
+    };
+    
     int i;
     
-    for(i = 0; i < 6; i++) {
+    for(i = 0; i < 17; i++) {
 	if( !(strcmp(unit, unit_table[i]) )) {
 	    return i;
 	}
@@ -56,8 +84,47 @@ int get_unit_idx(char* unit)
     
 }
 
+void _convert(double convFactor, int floatDigit, char* file_out)
+{
+    int fd;
+    double val, convFactor;
+    char word[BUFLEN];
+    
+    //1. open file to write
+    fd = newFile(file_out);
 
+    //3. Read word by word, converting
+    while(1) {
+	int n;
+	
+	//read word
+	if( readWord(word, STDIN_FILENO) == 0 )
+	    break;
 
+	//Convert string to float
+	val = atof(word);
+    
+	//Scale the value
+	val = val * convFactor;
+    
+	//Convert float to string
+	fToStr(val, floatDigit, word);
+	
+	//Write to outputfile
+	n = write(fd, word, strlen(word));
+
+	//write error
+	if( n == -1 ) {
+	    perror("write");
+	    exit(errno);
+	}	
+    }
+
+    close(fd);
+}
+
+//Conversion 1: Conventional mass unit conversion
+//Input: unit number of mass units, Output: Scale factor between the units.
 double get_convFactor_mass(int unit_1_idx, int unit_2_idx)
 {
     int i, unitDistance;
@@ -190,51 +257,56 @@ double get_convFactor_mass(int unit_1_idx, int unit_2_idx)
     return convFactor;    
 }
 
-
-//Conversion function 1: mass unit conversion
-void conv_mass(int unit_1_idx, int unit_2_idx, int floatDigit, char* file_out)
+//Conversion 2: Metric units
+double get_convFactor_metric(int unit_1_idx, int unit_2_idx)
 {
-    int fd;
-    double val, convFactor;
-    char word[BUFLEN];
-    
-    //1. open file to write
-    fd = newFile(file_out);
+    int i, unitDistance, correction = 0;
+    double convFactor = 1;
 
-    //2. get conversion scale factor between units
-    convFactor = get_convFactor_mass(unit_1_idx, unit_2_idx);
+    unitDistance = unit_2_idx - unit_1_idx;
 
-    //3. Read word by word, converting
-    while(1) {
-	int n;
+    //Up conversion
+    if( unitDistance > 0 ) {
+	//convFactor assumed to be every cubic
+	for( i = 0; i < unitDistance; i++ ) {
+	    convFactor = convFactor * 1000;
+	}
+
+	//correction scale factor
+	for( i = unit_1_idx - 1; i <= unit_2_idx; i++) {
+	    if( i >= 10 && i <= 17 ) {
+		correction++;
+	    }
+	}
 	
-	//read word
-	if( readWord(word, STDIN_FILENO) == 0 )
-	    break;
+	for( i = 0; i < correction; i++) {
+	    convFactor = convFactor / 100;
+	}
+     }
+    
+    //Down conversion
+    else if( unitDistance < 0 ) {
 
-	//Convert string to float
-	val = atof(word);
-    
-	//Scale the value
-	val = val * convFactor;
-    
-	//Convert float to string
-	fToStr(val, floatDigit, word);
+	//convFactor assumed to be every cubic
+	for( i = 0; i < abs(unitDistance); i++ ) {
+	    convFactor = convFactor / 1000;
+	}
+
+	//correction scale factor
+	for( i = unit_1_idx - 1; i >= unit_2_idx; i--) {
+	    if( i >= 11 && i <= 16 ) {
+		correction++;
+	    }
+	}
 	
-	//Write to outputfile
-	n = write(fd, word, strlen(word));
-
-	//write error
-	if( n == -1 ) {
-	    perror("write");
-	    exit(errno);
-	}	
+	for( i = 0; i < correction; i++) {
+	    convFactor = convFactor * 100;
+	}
     }
+   
 
-    close(fd);
+    return convFactor;    
 }
-
-//Conversion function 2:
 
 
 //Conversion function 3:
@@ -242,5 +314,3 @@ void conv_mass(int unit_1_idx, int unit_2_idx, int floatDigit, char* file_out)
 //Conversion function 4:
 
 //Conversion function 5:
-
-//Conversion function 6:
