@@ -12,6 +12,7 @@
 
    Conversions:
    >>datamaster -conv         k-g        numOfDigits     dataoutput.txt
+   >>datamaster -conv         nano-centi numOfDigits     dataoutput.txt
 
    Computations:
    >>datamaster -comp         mean       numOfDigits     dataoutput.txt  
@@ -44,9 +45,7 @@ int main(int argc, char *argv[])
 	    
 	}
 	else {
-		printf("main convcall\n");
 	    conversion(argv[2], 2, argv[3]);//default 2 digits after the point
-	
 	}
 	
     }

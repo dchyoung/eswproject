@@ -46,7 +46,7 @@ void conversion(char* option, int floatDigit, char* file_out)
     {
 	//Get conversion scale factor for the units
 	convFactor = get_convFactor_metric(unit_1_idx, unit_2_idx);
-	_convert(unit_1_idx, unit_2_idx, floatDigit, file_out);
+	_convert(convFactor, floatDigit, file_out);
     }
     else {
 	printf("Invalid Unit.\n");
@@ -63,7 +63,7 @@ void conversion(char* option, int floatDigit, char* file_out)
 
 int get_unit_idx(char* unit)
 {
-    char* unit_table[17] = {
+    char* unit_table[23] = {
 	//Conventional Mass Unit
 	"mcg", "mg", "g", "kg", "lb", "oz",
 	//Metric Unit
@@ -74,7 +74,7 @@ int get_unit_idx(char* unit)
     
     int i;
     
-    for(i = 0; i < 17; i++) {
+    for(i = 0; i < 23; i++) {
 	if( !(strcmp(unit, unit_table[i]) )) {
 	    return i;
 	}
@@ -87,7 +87,7 @@ int get_unit_idx(char* unit)
 void _convert(double convFactor, int floatDigit, char* file_out)
 {
     int fd;
-    double val, convFactor;
+    double val;
     char word[BUFLEN];
     
     //1. open file to write
@@ -268,13 +268,14 @@ double get_convFactor_metric(int unit_1_idx, int unit_2_idx)
     //Up conversion
     if( unitDistance > 0 ) {
 	//convFactor assumed to be every cubic
+
 	for( i = 0; i < unitDistance; i++ ) {
 	    convFactor = convFactor * 1000;
 	}
 
 	//correction scale factor
-	for( i = unit_1_idx - 1; i <= unit_2_idx; i++) {
-	    if( i >= 10 && i <= 17 ) {
+	for( i = unit_1_idx + 1; i <= unit_2_idx; i++) {
+	    if( i >= 11 && i <= 17 ) {
 		correction++;
 	    }
 	}
