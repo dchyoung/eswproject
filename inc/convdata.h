@@ -18,6 +18,9 @@ double get_convFactor_mass(int unit_1_idx, int unit_2_idx);
 	                      none, deca, hecto, kilo, mega, giga, tera, peta, exa*/
 double get_convFactor_metric(int unit_1_idx, int unit_2_idx);
 
-
+/*Conversion 3: Length units (mm, cm, m, km, in, ft, yd, mile)*/
+double get_convFactor_length(int unit_1_idx, int unit_2_idx);
+double get_convFactor_length_imperial(int unit_1_idx, int unit_2_idx);
+double get_convFactor_length_SI(int unit_1_idx, int unit_2_idx);
 
 #endif

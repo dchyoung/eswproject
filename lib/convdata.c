@@ -48,33 +48,40 @@ void conversion(char* option, int floatDigit, char* file_out)
 	convFactor = get_convFactor_metric(unit_1_idx, unit_2_idx);
 	_convert(convFactor, floatDigit, file_out);
     }
+    
+    //Conversion 3: Length Unit: 23 - 30
+    else if( (unit_1_idx >= 23 && unit_1_idx < 30) &&
+	(unit_2_idx >= 23 && unit_2_idx < 30) )
+    {
+	//Get conversion scale factor for the units
+	convFactor = get_convFactor_metric(unit_1_idx, unit_2_idx);
+	_convert(convFactor, floatDigit, file_out);
+    }
+    //Conversion 4:
+
+    //....
     else {
 	printf("Invalid Unit.\n");
 	exit(0);
     }
-
-    //Conversion 3:
-    
-    //Conversion 4:
-
-    //....
 }
 
 
 int get_unit_idx(char* unit)
 {
-    char* unit_table[23] = {
-	//Conventional Mass Unit
+    char* unit_table[31] = {
+	//Conventional Mass Unit (0 ~ 5)
 	"mcg", "mg", "g", "kg", "lb", "oz",
-	//Metric Unit
+	//Metric Unit (6 ~ 22)
         "atto", "femto", "pico", "nano", "micro", "milli", "centi", "deci",
-	"none", "deca", "hecto", "kilo", "mega", "giga", "tera", "peta", "exa"
-	//
+	"none", "deca", "hecto", "kilo", "mega", "giga", "tera", "peta", "exa",
+	//Length Unit (23 ~ 30)
+	"mm", "cm", "m", "km", "in", "ft", "yd", "mile" 
     };
     
     int i;
     
-    for(i = 0; i < 23; i++) {
+    for(i = 0; i < 31; i++) {
 	if( !(strcmp(unit, unit_table[i]) )) {
 	    return i;
 	}
@@ -270,18 +277,18 @@ double get_convFactor_metric(int unit_1_idx, int unit_2_idx)
 	//convFactor assumed to be every cubic
 
 	for( i = 0; i < unitDistance; i++ ) {
-	    convFactor = convFactor * 1000;
+	    convFactor = convFactor / 1000;
 	}
 
 	//correction scale factor
 	for( i = unit_1_idx + 1; i <= unit_2_idx; i++) {
-	    if( i >= 11 && i <= 17 ) {
+	    if( i >= 12 && i <= 17 ) {
 		correction++;
 	    }
 	}
 	
 	for( i = 0; i < correction; i++) {
-	    convFactor = convFactor / 100;
+	    convFactor = convFactor * 100;
 	}
      }
     
@@ -290,7 +297,7 @@ double get_convFactor_metric(int unit_1_idx, int unit_2_idx)
 
 	//convFactor assumed to be every cubic
 	for( i = 0; i < abs(unitDistance); i++ ) {
-	    convFactor = convFactor / 1000;
+	    convFactor = convFactor * 1000;
 	}
 
 	//correction scale factor
@@ -301,7 +308,7 @@ double get_convFactor_metric(int unit_1_idx, int unit_2_idx)
 	}
 	
 	for( i = 0; i < correction; i++) {
-	    convFactor = convFactor * 100;
+	    convFactor = convFactor / 100;
 	}
     }
    
@@ -310,7 +317,207 @@ double get_convFactor_metric(int unit_1_idx, int unit_2_idx)
 }
 
 
-//Conversion function 3:
+//Conversion function 3: Length, Unit Number between (23 ~ 30)
+double get_convFactor_length_SI(int unit_1_idx, int unit_2_idx)
+{
+    double convFactor = 1;
+    int unitDistance;
+
+    unitDistance = unit_2_idx - unit_1_idx;
+
+    if( unitDistance > 0 ) {
+	if( unit_1_idx == 23 ) {
+	    if( unitDistance == 1 ) 
+		convFactor = 1/10;
+	    
+	    else if( unitDistance == 2 ) 
+		convFactor = 1 / (10 * 100);
+	    
+	    else if( unitDistance == 3 ) 
+		convFactor = 1 / (10 * 100 * 1000);
+	    
+	}
+
+	else if( unit_1_idx == 24 ) {
+	    if( unitDistance == 1 ) 
+		convFactor = 1/100;
+	    
+	    else if( unitDistance == 2 ) 
+		convFactor = 1 / (100 * 1000);
+	    
+	}
+
+	else if( unit_1_idx == 25 ) 
+	    convFactor = 1/1000;
+	
+		
+    }
+    else if( unitDistance < 0 ) {
+	if( unit_1_idx == 26 ) {
+	    if( abs(unitDistance) == 1 ) 
+		convFactor = 1000;
+	    
+	    else if( abs(unitDistance) == 2 ) 
+		convFactor = 100 * 1000;
+	    
+	    else if( abs(unitDistance) == 3 ) 
+		convFactor = 10 * 100 * 1000;
+	    
+	}
+
+	else if( unit_1_idx == 25 ) {
+	    if( abs(unitDistance) == 1 ) 
+		convFactor = 100;
+	    
+	    else if( abs(unitDistance) == 2 ) 
+		convFactor = 10 * 100;
+	    
+	}
+        else if( unit_1_idx == 24 ) 
+	    convFactor = 10;	
+    }
+
+    return convFactor;
+}
+double get_convFactor_length_imperial(int unit_1_idx, int unit_2_idx)
+{
+    double convFactor = 1;
+    int unitDistance;
+
+    
+    unitDistance = unit_2_idx - unit_1_idx;
+
+    if( unitDistance > 0 ) {
+	if( unit_1_idx == 27 ) {
+	    if( unitDistance == 1 ) 
+		convFactor = 1 / 12;
+	    
+	    else if( unitDistance == 2 ) 
+		convFactor = 1 / (12 * 3);
+	    
+	    else if( unitDistance == 3 ) 
+		convFactor = 1 / (12 * 3 * 1760);
+	    
+	}
+
+	else if( unit_1_idx == 28 ) {
+	    if( unitDistance == 1 ) 
+		convFactor = 1/3;
+	    
+	    else if( unitDistance == 2 ) 
+		convFactor = 1 / (3 * 1760);
+	    
+	}
+
+	else if( unit_1_idx == 29 ) 
+	    convFactor = 1/1760;
+	
+		
+    }
+    else if( unitDistance < 0 ) {
+	if( unit_1_idx == 30 ) {
+	    if( abs(unitDistance) == 1 ) 
+		convFactor = 1760;
+	    
+	    else if( abs(unitDistance) == 2 ) 
+		convFactor = 3 * 1760;
+	    
+	    else if( abs(unitDistance) == 3 ) 
+		convFactor = 12 * 3 * 1760;
+	    
+	}
+
+	else if( unit_1_idx == 29 ) {
+	    if( abs(unitDistance) == 1 ) 
+		convFactor = 3;
+	    
+	    else if( abs(unitDistance) == 2 ) 
+		convFactor = 12 * 3;
+	    
+	}
+        else if( unit_1_idx == 28 ) 
+	    convFactor = 12;	
+    }
+
+    return convFactor;
+}
+
+double get_convFactor_length(int unit_1_idx, int unit_2_idx)
+{
+    double convFactor = 1;
+
+    
+    //case 1: conversion between SI units
+    if( (unit_1_idx >= 23 && unit_1_idx <= 26) &&
+	(unit_2_idx >= 23 && unit_2_idx <= 26) )
+    {
+	convFactor = get_convFactor_length_SI(unit_1_idx, unit_2_idx);
+    }
+
+    //case 2: Conversion between Imperial units
+    else if( (unit_1_idx >= 27 && unit_1_idx <= 30) &&
+	(unit_2_idx >= 27 && unit_2_idx <= 30) )
+    {
+	convFactor = get_convFactor_length_imperial(unit_1_idx, unit_2_idx);
+    }
+    
+    //case 3: conversion between SI and Imperial
+    else
+    {
+	//SI to imperial
+	if(unit_1_idx >= 23 && unit_1_idx <= 26) {
+	    //change unit 1 to corresponding impeirial
+	    switch (unit_1_idx) {
+		case 23:
+		    convFactor = get_convFactor_length_imperial(27, unit_2_idx);
+		    convFactor = convFactor / 25.4;
+		    break;
+		case 24:
+		    convFactor = get_convFactor_length_imperial(27, unit_2_idx);
+		    convFactor = convFactor / 2.54;
+		    break;
+		case 25:
+		    convFactor = get_convFactor_length_imperial(29, unit_2_idx);
+		    convFactor = convFactor * 1.09 ;
+		    break;
+		case 26:
+		    convFactor = get_convFactor_length_imperial(30, unit_2_idx);
+		    convFactor = convFactor / 1.6;
+		    break;
+	        default:
+		    break;
+	    }
+
+	}
+	
+	//imperial to SI
+	else {
+	    //change unit 1 to corresponding si
+	   switch (unit_1_idx) {
+	        case 27: //inch
+		    convFactor = get_convFactor_length_SI(24, unit_2_idx);
+		    convFactor = convFactor * 2.54;
+		    break;
+	        case 28: //ft
+		    convFactor = get_convFactor_length_SI(24, unit_2_idx);
+		    convFactor = convFactor * 30.48;
+		    break;
+	        case 29: //yd
+		    convFactor = get_convFactor_length_SI(25, unit_2_idx);
+		    convFactor = convFactor / 1.09 ;
+		    break;
+	        case 30: //mile
+		    convFactor = get_convFactor_length_SI(26, unit_2_idx);
+		    convFactor = convFactor * 1.6;
+		    break;
+	        default:
+		    break;
+	    }
+	}
+    }
+
+    return convFactor;   
+}
 
 //Conversion function 4:
 
