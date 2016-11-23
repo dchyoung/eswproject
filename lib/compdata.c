@@ -10,6 +10,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <unistd.h>
+#include <math.h>
 
 #include "parser.h"
 #include "compdata.h"
@@ -48,6 +49,11 @@ void computation(char *option, int floatDigit, char *file_out)
 	}
 	
 	
+    //Computation 4: Data's Standard Deviation
+    else if( !(strcmp(suboption, "stdde")) ) {
+	comp_stdde(floatDigit, file_out);
+    }
+
         
     }
     
@@ -328,43 +334,84 @@ void comp_hist(int distance, int floatDigit, char *file_out)
 //Computation 4: Standard deviation
 void comp_stdde(int floatDigit, char *file_out)
 {
-    int fd, fd_tmp, n;
+    int fd, fd_tmp1, fd_tmp2, n1, n2;
     int i = 0;
-    double prob;
+    double stdde, prob, sum=0, e1, e2;
     char word[BUFLEN];
     
     //1. open file to write
     fd = newFile(file_out);
 
-    //2. open temporary file
-    fd_tmp = newFile("tmp");
+    //2. open temporary_1 file
+    fd_tmp1 = newFile("tmp1");
 
-    //3. Count data and Copy from std input stream  to temporary file
+    //3. open temporary_2 file
+    fd_tmp2 = newFile("tmp2");
+
+    //4. Count data and Copy from std input stream to temporary file
     while(1) {
     
 	if( readWord(word, STDIN_FILENO) == 0 )
 	    break;
 	
 	strcat(word, " ");//Spacing each word
-	n = write(fd_tmp, word, strlen(word));
+	n1 = write(fd_tmp1, word, strlen(word));
 
-	if(n == -1) {
+	strcat(word, " ");//Spacing each word
+	n2 = write(fd_tmp2, word, strlen(word));
+
+	if(n1 == -1 && n2 == -1) {
 	    perror("write error");
 	    exit(errno);
 	}
 	i = i + 1;	 
     }
     if( i > 0) {
-	close(fd_tmp);
+	close(fd_tmp1);
+	close(fd_tmp2);
     }
 	
-    //4. Open tmp file
-    fd_tmp = open("tmp", O_RDONLY);
+    //5. Open tmporary1 file & Computation of total sum of each square.
+    fd_tmp1 = open("tmp1", O_RDONLY);
 	
     while(i != 0) {
 
 	//read word
-	if( readWord(word, fd_tmp) == 0 )
+	if( readWord(word, fd_tmp1) == 0 )
+	    break;
+
+	//Convert string to float 
+	prob = atof(word);
+
+	//Compute weighted value
+	prob = (prob / i)*(prob / i);
+	sum = sum + prob;
+
+	}
+
+
+    if(sum >= 0) {
+
+	//Convert double to string
+	fToStr(sum, floatDigit, word);;
+
+	//Write to output file
+	n1 = write(fd_temp1, word, strlen(word));
+
+	//Write error
+	if(n1 == -1) {
+	    perror("write_fd_tem1 error");
+	    exit(errno);
+	}
+    }
+
+    //6. Open tmporary2 file
+    fd_tmp2 = open("tmp2", O_RDONLY);
+	
+    while(i != 0) {
+
+	//read word
+	if( readWord(word, fd_tmp2) == 0 )
 	    break;
 
 	//Convert string to float 
@@ -372,22 +419,61 @@ void comp_stdde(int floatDigit, char *file_out)
 
 	//Compute weighted value
 	prob = prob / i;
+	sum = sum + prob;
+
+	}
+
+
+    if(sum >= 0) {
 
 	//Convert double to string
-	fToStr(prob, floatDigit, word);;
+	fToStr(sum, floatDigit, word);;
 
 	//Write to output file
-	n = write(fd, word, strlen(word));
+	n2 = write(fd_temp2, word, strlen(word));
 
 	//Write error
-	if(n == -1) {
-	    perror("write error");
+	if(n2 == -1) {
+	    perror("write_fd_tem2 error");
 	    exit(errno);
 	}
     }
 
+    //7. Computation of standard deviation.
+    while(1) {
+
+	//read word
+	if( readWord(word1, fd_tmp1) == 0 )
+	    break;
+	if( readWord(word2, fd_tmp2) == 0 )
+	    break;
+
+	//Convert string to float 
+	e1 = atof(word1);
+	e2 = atof(word2);
+
+	//Compute weighted value
+	stdde = sqrt(e1+(e2*e2));
+
+	//Convert double to string
+	fToStr(stdde, floatDigit, word);;
+
+	//Write to output file
+	n1 = write(fd, word, strlen(word));
+
+	//Write error
+	if(n1 == -1) {
+	    perror("write_fd error");
+	    exit(errno);
+	}
+    }
+
+
     close(fd);
-    close(fd_tmp);
+    close(fd_tmp1);
+    close(fd_tmp2);
+
     //remove temporary file
-    remove("tmp");
+    remove("tmp1");
+    remove("tmp2");
 }
