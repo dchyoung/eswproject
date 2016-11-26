@@ -30,8 +30,8 @@ void conversion(char* option, int floatDigit, char* file_out)
     unit_2_idx = get_unit_idx(unit_2);
     
     //Conversion 1: Unit index between 0 and 5: Conventional mass unit    
-    if( (unit_1_idx >= 0 && unit_1_idx < 6) &&
-	(unit_2_idx >= 0 && unit_2_idx < 6) )
+    if( (unit_1_idx >= MCG && unit_1_idx <= OZ) &&
+	(unit_2_idx >= MCG && unit_2_idx <= OZ) )
     {	
 	//Get conversion scale factor for the units
 	convFactor = get_convFactor_mass(unit_1_idx, unit_2_idx);
@@ -41,8 +41,8 @@ void conversion(char* option, int floatDigit, char* file_out)
     }
 
     //Conversion 2: Unit Index number between 6 and 22: Metric Unit Conversion
-    else if( (unit_1_idx >= 6 && unit_1_idx < 23) &&
-	(unit_2_idx >= 6 && unit_2_idx < 23) )
+    else if( (unit_1_idx >= ATTO && unit_1_idx <= EXA) &&
+	(unit_2_idx >= ATTO && unit_2_idx <= EXA) )
     {
 	//Get conversion scale factor for the units
 	convFactor = get_convFactor_metric(unit_1_idx, unit_2_idx);
@@ -50,11 +50,14 @@ void conversion(char* option, int floatDigit, char* file_out)
     }
     
     //Conversion 3: Length Unit: 23 - 30
-    else if( (unit_1_idx >= 23 && unit_1_idx < 30) &&
-	(unit_2_idx >= 23 && unit_2_idx < 30) )
+    else if( (unit_1_idx >= MM && unit_1_idx <= MILE) &&
+	(unit_2_idx >= MM && unit_2_idx <= MILE) )
     {
 	//Get conversion scale factor for the units
-	convFactor = get_convFactor_metric(unit_1_idx, unit_2_idx);
+	convFactor = get_convFactor_length(unit_1_idx, unit_2_idx);
+	//##debug
+	printf("Conversion Factor == %f\n", convFactor);
+	//##debug
 	_convert(convFactor, floatDigit, file_out);
     }
     //Conversion 4:
@@ -187,7 +190,7 @@ double get_convFactor_mass(int unit_1_idx, int unit_2_idx)
 
 	    //To pound: x(1/16)
 	    if(unit_2_idx == LB) {
-		convFactor = 1/16;
+		convFactor = 1.0/16;
 	    }
 	    
 	    else if(unit_2_idx == OZ) {
@@ -327,28 +330,29 @@ double get_convFactor_length_SI(int unit_1_idx, int unit_2_idx)
 
     if( unitDistance > 0 ) {
 	if( unit_1_idx == MM ) {
-	    if( unitDistance == 1 ) 
-		convFactor = 1/10;
+	    if( unitDistance == 1 )
+		convFactor = 1.0/10;
+     
 	    
 	    else if( unitDistance == 2 ) 
-		convFactor = 1 / (10 * 100);
+		convFactor = 1.0 / (10 * 100);
 	    
 	    else if( unitDistance == 3 ) 
-		convFactor = 1 / (10 * 100 * 1000);
+		convFactor = 1.0 / (10 * 100 * 1000);
 	    
 	}
 
 	else if( unit_1_idx == CM ) {
 	    if( unitDistance == 1 ) 
-		convFactor = 1/100;
+		convFactor = 1.0/100;
 	    
 	    else if( unitDistance == 2 ) 
-		convFactor = 1 / (100 * 1000);
+		convFactor = 1.0 / (100 * 1000);
 	    
 	}
 
 	else if( unit_1_idx == M ) 
-	    convFactor = 1/1000;
+	    convFactor = 1.0/1000;
 	
 		
     }
@@ -366,8 +370,9 @@ double get_convFactor_length_SI(int unit_1_idx, int unit_2_idx)
 	}
 
 	else if( unit_1_idx == M ) {
-	    if( abs(unitDistance) == 1 ) 
+	    if( abs(unitDistance) == 1 )
 		convFactor = 100;
+  
 	    
 	    else if( abs(unitDistance) == 2 ) 
 		convFactor = 10 * 100;
@@ -390,27 +395,27 @@ double get_convFactor_length_imperial(int unit_1_idx, int unit_2_idx)
     if( unitDistance > 0 ) {
 	if( unit_1_idx == IN ) {
 	    if( unitDistance == 1 ) 
-		convFactor = 1 / 12;
+		convFactor = 1.0 / 12;
 	    
 	    else if( unitDistance == 2 ) 
-		convFactor = 1 / (12 * 3);
+		convFactor = 1.0 / (12 * 3);
 	    
 	    else if( unitDistance == 3 ) 
-		convFactor = 1 / (12 * 3 * 1760);
+		convFactor = 1.0 / (12 * 3 * 1760);
 	    
 	}
 
 	else if( unit_1_idx == FT ) {
 	    if( unitDistance == 1 ) 
-		convFactor = 1/3;
+		convFactor = 1.0/3;
 	    
 	    else if( unitDistance == 2 ) 
-		convFactor = 1 / (3 * 1760);
+		convFactor = 1.0 / (3 * 1760);
 	    
 	}
 
 	else if( unit_1_idx == YD ) 
-	    convFactor = 1/1760;
+	    convFactor = 1.0/1760;
 	
 		
     }
