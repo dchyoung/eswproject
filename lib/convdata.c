@@ -588,28 +588,95 @@ double get_convFactor_time(int unit_1_idx, int unit_2_idx)
 
 double get_convFactor_velocity(int unit_1_idx, int unit_2_idx)
 {
-    /*
+    int unit1, unit2;
     double convFactor = 1;
 
-    //CASE 1: Conversion not involving knott
-    if(  (unit_1_idx >= M/S && unit_1_idx <= MI/H) &&
-	 (unit_2_idx >= M/S && unit_2_idx <= MI/H) )
-    {
-	//convsersion not involving time scale
-	if( (unit_1_idx % 2 == 0 && unit_2_idx % 2 == 0) ||
-	    (unit_1_idx % 2 == 1 && unit_2_idx % 2 == 1) )
-        {
-	    
+    if( unit_1_idx != unit_2_idx ) {
+
+	//1. Check if the conversion involves knott
+	 if( unit_1_idx == KN ) {
+	     convFactor = convFactor * 1.85;
+	     unit_1_idx = KM_H;
+	 }
+    
+	 if( unit_2_idx == KN ) {
+	     convFactor = convFactor / 1.85;
+	     unit_2_idx = KM_H;
+	 }
+
+	 //2. Time scale conversion
+	if( (unit_1_idx % 2) != (unit_2_idx % 2) ) {
+
+	    // x/sec to x hour
+	    if( unit_1_idx % 2 == 0 ) {
+		convFactor = convFactor * get_convFactor_time(HR, SEC);
+	    }
+
+	    // x/hr to x/sec
+	    else {
+		convFactor = convFactor * get_convFactor_time(SEC, HR);
+	    }
 	}
 
-	//convsersion involving time scale
+	//Get length unit of unit 1
+	switch (unit_1_idx) {
+	    case M_S:
+	    case M_H:
+		unit1 = M;
+		break;
+		
+	    case KM_S:
+	    case KM_H:
+		unit1 = KM;
+		break;
+
+	    case FT_S:
+	    case FT_H:
+		unit1 = FT;
+		break;
+
+	    case MI_S:
+	    case MI_H:
+		unit1 = MILE;
+		break;
+		
+	    default:
+		break;
+	}
+
+	//Get length unit of unit 2
+	switch (unit_2_idx) {
+	    case M_S:
+	    case M_H:
+		unit2 = M;
+		break;
+		
+	    case KM_S:
+	    case KM_H:
+		unit2 = KM;
+		break;
+
+	    case FT_S:
+	    case FT_H:
+		unit2 = FT;
+		break;
+
+	    case MI_S:
+	    case MI_H:
+		unit2 = MILE;
+		break;
+		
+	    default:
+		break;
+	}
+
+	convFactor = convFactor * get_convFactor_length(unit1, unit2);
+
+	 
     }
 
-    //CASE 2: Conversion involving knott
-   
-
     return convFactor;   
-    */
+    
 }
 
 //Conversion function 5:
