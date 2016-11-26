@@ -2,7 +2,8 @@
 #define CONVDATA_H
 
 /*Unit ID number Macros*/
-#define NUM_OF_UNITS 31
+#define NUM_OF_UNITS 43
+
 //Mass units
 #define MCG    0
 #define MG     1
@@ -40,6 +41,24 @@
 #define YD     29
 #define MILE   30
 
+//Time scale
+#define SEC    31
+#define MIN    32
+#define HR     33
+
+//Velocity units
+#define M_S    34
+#define M_H    35
+#define KM_S   36
+#define KM_H   37
+#define FT_S   38
+#define FT_H   39
+#define MI_S   40
+#define MI_H   41
+#define KN     42
+
+
+
 
 //Master index function that calls each conversion
 void conversion(char *option, int floatDigit, char *file_out);
@@ -62,5 +81,11 @@ double get_convFactor_metric(int unit_1_idx, int unit_2_idx);
 double get_convFactor_length(int unit_1_idx, int unit_2_idx);
 double get_convFactor_length_imperial(int unit_1_idx, int unit_2_idx);
 double get_convFactor_length_SI(int unit_1_idx, int unit_2_idx);
+
+/*Conversion 4: Time Scale (sec, min, hour)*/
+double get_convFactor_time(int unit_1_idx, int unit_2_idx);
+
+/*Conversion 5: Velocity units (m/s, m/h, km/s, km/h, ft/s, ft/h, mi/s, mi/h, kn)*/
+double get_convFactor_velocity(int unit_1_idx, int unit_2_idx);
 
 #endif

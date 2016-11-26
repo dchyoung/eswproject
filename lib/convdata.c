@@ -60,7 +60,33 @@ void conversion(char* option, int floatDigit, char* file_out)
 	//##debug
 	_convert(convFactor, floatDigit, file_out);
     }
+
+    //Conversion 4: Time scale
+    else if( (unit_1_idx >= SEC && unit_1_idx <= HR) &&
+	(unit_2_idx >= SEC && unit_2_idx <= HR) )
+    {
+	//Get conversion scale factor for the units
+	convFactor = get_convFactor_time(unit_1_idx, unit_2_idx);
+	//##debug
+	printf("Conversion Factor == %f\n", convFactor);
+	//##debug
+	_convert(convFactor, floatDigit, file_out);
+    }
+    
+    //Conversion 5: Velocity conversion
+    else if( (unit_1_idx >= M_S && unit_1_idx <= KN) &&
+	(unit_2_idx >= M_S && unit_2_idx <= KN) )
+    {
+	//Get conversion scale factor for the units
+	convFactor = get_convFactor_velocity(unit_1_idx, unit_2_idx);
+	//##debug
+	printf("Conversion Factor == %f\n", convFactor);
+	//##debug
+	_convert(convFactor, floatDigit, file_out);
+    }
     //Conversion 4:
+
+    
 
     //....
     else {
@@ -75,11 +101,21 @@ int get_unit_idx(char* unit)
     char* unit_table[NUM_OF_UNITS] = {
 	//Conventional Mass Unit (0 ~ 5)
 	"mcg", "mg", "g", "kg", "lb", "oz",
+
 	//Metric Unit (6 ~ 22)
         "atto", "femto", "pico", "nano", "micro", "milli", "centi", "deci",
 	"none", "deca", "hecto", "kilo", "mega", "giga", "tera", "peta", "exa",
+
 	//Length Unit (23 ~ 30)
-	"mm", "cm", "m", "km", "in", "ft", "yd", "mile" 
+	"mm", "cm", "m", "km", "in", "ft", "yd", "mile",
+
+	//Time scale (31 ~ 33)
+	"sec", "min", "hr",
+
+	//Velocity Unit (34 ~ 42)
+	"m/s", "m/h", "km/s", "km/h", "ft/s", "ft/h", "mi/s", "mi/h", "kn"
+
+	
     };
     
     int i;
@@ -523,7 +559,57 @@ double get_convFactor_length(int unit_1_idx, int unit_2_idx)
 
     return convFactor;   
 }
+//Conversion function 4: Time scale
+double get_convFactor_time(int unit_1_idx, int unit_2_idx)
+{
+     double convFactor = 1;
+     int unitDistance;
+     int i;
 
-//Conversion function 4:
+     unitDistance = unit_2_idx - unit_1_idx;
+
+     if( unitDistance > 0 ) {
+	 for( i = 0; i < unitDistance; i++ ) {
+	     convFactor = convFactor / 60;
+	 }
+	 
+     }
+     else if( unitDistance < 0 ) {
+	 for( i = 0; i < abs(unitDistance); i++ ) {
+	     convFactor = convFactor * 60;
+	 } 
+     }
+
+     return convFactor;   
+    
+}
+
+//Conversion function 5: Velocity conversion
+
+double get_convFactor_velocity(int unit_1_idx, int unit_2_idx)
+{
+    /*
+    double convFactor = 1;
+
+    //CASE 1: Conversion not involving knott
+    if(  (unit_1_idx >= M/S && unit_1_idx <= MI/H) &&
+	 (unit_2_idx >= M/S && unit_2_idx <= MI/H) )
+    {
+	//convsersion not involving time scale
+	if( (unit_1_idx % 2 == 0 && unit_2_idx % 2 == 0) ||
+	    (unit_1_idx % 2 == 1 && unit_2_idx % 2 == 1) )
+        {
+	    
+	}
+
+	//convsersion involving time scale
+    }
+
+    //CASE 2: Conversion involving knott
+   
+
+    return convFactor;   
+    */
+}
 
 //Conversion function 5:
