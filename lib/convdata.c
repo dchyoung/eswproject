@@ -84,9 +84,47 @@ void conversion(char* option, int floatDigit, char* file_out)
 	//##debug
 	_convert(convFactor, floatDigit, file_out);
     }
-    //Conversion 4:
 
+    //Conversion 6 : pi(3.14) conversion
+    else if( (unit_1_idx >= MM && unit_1_idx <= MILE) &&
+	(unit_2_idx >= MM && unit_2_idx <= MILE) )
+    {
+	//Get conversion scale factor for the units
+	convFactor = get_convFactor_length(unit_1_idx, unit_2_idx);
+	//##debug
+	printf("Conversion Factor == %f\n", convFactor);
+	//##debug
+	_convert(convFactor, floatDigit, file_out);
+    }
     
+    //Conversion 7 : from angle to radian conversion
+    else if( (unit_1_idx >= MM && unit_1_idx <= MILE) &&
+	(unit_2_idx >= MM && unit_2_idx <= MILE) )
+    {
+	//Get conversion scale factor for the units
+	convFactor = get_convFactor_length(unit_1_idx, unit_2_idx);
+	//##debug
+	printf("Conversion Factor == %f\n", convFactor);
+	//##debug
+	_convert(convFactor, floatDigit, file_out);
+    }
+
+    //Conversion 8 : from radian to degree conversion
+    else if( (unit_1_idx >= MM && unit_1_idx <= MILE) &&
+	(unit_2_idx >= MM && unit_2_idx <= MILE) )
+    {
+	//Get conversion scale factor for the units
+	convFactor = get_convFactor_length(unit_1_idx, unit_2_idx);
+	//##debug
+	printf("Conversion Factor == %f\n", convFactor);
+	//##debug
+	_convert(convFactor, floatDigit, file_out);
+    }
+
+    //Conversion 9:
+
+
+
 
     //....
     else {
@@ -679,4 +717,19 @@ double get_convFactor_velocity(int unit_1_idx, int unit_2_idx)
     
 }
 
-//Conversion function 5:
+//Conversion function 6 : pi conversion
+double get_convFactor_pi(int unit_1_idx, int unit_2_idx);
+
+
+//Conversion function 7 : radian conversion
+double get_convFactor_radian(int unit_1_idx, int unit_2_idx);
+
+
+//Conversion function 8 : degree conversion
+double get_convFactor_degree(int unit_1_idx, int unit_2_idx);
+
+
+
+
+
+

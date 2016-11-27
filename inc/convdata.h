@@ -57,7 +57,9 @@
 #define MI_H   41
 #define KN     42
 
-
+//angle units
+#define rad    43
+#define deg    44
 
 
 //Master index function that calls each conversion
@@ -87,5 +89,14 @@ double get_convFactor_time(int unit_1_idx, int unit_2_idx);
 
 /*Conversion 5: Velocity units (m/s, m/h, km/s, km/h, ft/s, ft/h, mi/s, mi/h, kn)*/
 double get_convFactor_velocity(int unit_1_idx, int unit_2_idx);
+
+/*Conversion 6 : pi units (deg)*/
+double get_convFactor_pi(int unit_1_idx, int unit_2_idx);
+
+/*Conversion 7 : radian units (rad)*/
+double get_convFactor_radian(int unit_1_idx, int unit_2_idx);
+
+/*Conversion 8 : degree units (deg)*/
+double get_convFactor_degree(int unit_1_idx, int unit_2_idx);
 
 #endif
