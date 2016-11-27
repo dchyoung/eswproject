@@ -47,6 +47,7 @@ void computation(char *option, int floatDigit, char *file_out)
 	else {
 	    printf("Invalid hist option. Need interval n:  hist-n\n");
 	}
+    }
 	
 	
     //Computation 4: Data's Standard Deviation
@@ -55,7 +56,7 @@ void computation(char *option, int floatDigit, char *file_out)
     }
 
         
-    }
+    
     
 
     //....
@@ -334,6 +335,7 @@ void comp_hist(int distance, int floatDigit, char *file_out)
 //Computation 4: Standard deviation
 void comp_stdde(int floatDigit, char *file_out)
 {
+
     int fd, fd_tmp, n;
     int i = 0;
     double stdde, prob_1, prob_2 sum_1=0, sum_2 = 0;
@@ -416,6 +418,5 @@ void comp_stdde(int floatDigit, char *file_out)
 
 
     //remove temporary file
-    remove("tmp2");
-
+    remove("tmp");
 }

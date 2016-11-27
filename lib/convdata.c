@@ -30,8 +30,8 @@ void conversion(char* option, int floatDigit, char* file_out)
     unit_2_idx = get_unit_idx(unit_2);
     
     //Conversion 1: Unit index between 0 and 5: Conventional mass unit    
-    if( (unit_1_idx >= 0 && unit_1_idx < 6) &&
-	(unit_2_idx >= 0 && unit_2_idx < 6) )
+    if( (unit_1_idx >= MCG && unit_1_idx <= OZ) &&
+	(unit_2_idx >= MCG && unit_2_idx <= OZ) )
     {	
 	//Get conversion scale factor for the units
 	convFactor = get_convFactor_mass(unit_1_idx, unit_2_idx);
@@ -41,8 +41,8 @@ void conversion(char* option, int floatDigit, char* file_out)
     }
 
     //Conversion 2: Unit Index number between 6 and 22: Metric Unit Conversion
-    else if( (unit_1_idx >= 6 && unit_1_idx < 23) &&
-	(unit_2_idx >= 6 && unit_2_idx < 23) )
+    else if( (unit_1_idx >= ATTO && unit_1_idx <= EXA) &&
+	(unit_2_idx >= ATTO && unit_2_idx <= EXA) )
     {
 	//Get conversion scale factor for the units
 	convFactor = get_convFactor_metric(unit_1_idx, unit_2_idx);
@@ -50,14 +50,43 @@ void conversion(char* option, int floatDigit, char* file_out)
     }
     
     //Conversion 3: Length Unit: 23 - 30
-    else if( (unit_1_idx >= 23 && unit_1_idx < 30) &&
-	(unit_2_idx >= 23 && unit_2_idx < 30) )
+    else if( (unit_1_idx >= MM && unit_1_idx <= MILE) &&
+	(unit_2_idx >= MM && unit_2_idx <= MILE) )
     {
 	//Get conversion scale factor for the units
-	convFactor = get_convFactor_metric(unit_1_idx, unit_2_idx);
+	convFactor = get_convFactor_length(unit_1_idx, unit_2_idx);
+	//##debug
+	printf("Conversion Factor == %f\n", convFactor);
+	//##debug
+	_convert(convFactor, floatDigit, file_out);
+    }
+
+    //Conversion 4: Time scale
+    else if( (unit_1_idx >= SEC && unit_1_idx <= HR) &&
+	(unit_2_idx >= SEC && unit_2_idx <= HR) )
+    {
+	//Get conversion scale factor for the units
+	convFactor = get_convFactor_time(unit_1_idx, unit_2_idx);
+	//##debug
+	printf("Conversion Factor == %f\n", convFactor);
+	//##debug
+	_convert(convFactor, floatDigit, file_out);
+    }
+    
+    //Conversion 5: Velocity conversion
+    else if( (unit_1_idx >= M_S && unit_1_idx <= KN) &&
+	(unit_2_idx >= M_S && unit_2_idx <= KN) )
+    {
+	//Get conversion scale factor for the units
+	convFactor = get_convFactor_velocity(unit_1_idx, unit_2_idx);
+	//##debug
+	printf("Conversion Factor == %f\n", convFactor);
+	//##debug
 	_convert(convFactor, floatDigit, file_out);
     }
     //Conversion 4:
+
+    
 
     //....
     else {
@@ -69,19 +98,29 @@ void conversion(char* option, int floatDigit, char* file_out)
 
 int get_unit_idx(char* unit)
 {
-    char* unit_table[31] = {
+    char* unit_table[NUM_OF_UNITS] = {
 	//Conventional Mass Unit (0 ~ 5)
 	"mcg", "mg", "g", "kg", "lb", "oz",
+
 	//Metric Unit (6 ~ 22)
         "atto", "femto", "pico", "nano", "micro", "milli", "centi", "deci",
 	"none", "deca", "hecto", "kilo", "mega", "giga", "tera", "peta", "exa",
+
 	//Length Unit (23 ~ 30)
-	"mm", "cm", "m", "km", "in", "ft", "yd", "mile" 
+	"mm", "cm", "m", "km", "in", "ft", "yd", "mile",
+
+	//Time scale (31 ~ 33)
+	"sec", "min", "hr",
+
+	//Velocity Unit (34 ~ 42)
+	"m/s", "m/h", "km/s", "km/h", "ft/s", "ft/h", "mi/s", "mi/h", "kn"
+
+	
     };
     
     int i;
     
-    for(i = 0; i < 31; i++) {
+    for(i = 0; i < NUM_OF_UNITS; i++) {
 	if( !(strcmp(unit, unit_table[i]) )) {
 	    return i;
 	}
@@ -139,7 +178,7 @@ double get_convFactor_mass(int unit_1_idx, int unit_2_idx)
 
     //Conversion Between SI Units
       //Unit number between 0 and 4: SI mass unit
-    if( (unit_1_idx < 4) && (unit_2_idx < 4) ) {
+    if( (unit_1_idx < LB) && (unit_2_idx < LB) ) {
 
 	unitDistance = unit_2_idx - unit_1_idx;
 
@@ -168,29 +207,29 @@ double get_convFactor_mass(int unit_1_idx, int unit_2_idx)
     }
 
     //Conversion Between English units (unit number 4 to 5)
-    else if( unit_1_idx > 3 && unit_2_idx > 3 ) {
+    else if( unit_1_idx > KG && unit_2_idx > KG ) {
 
 	//Convert from pound to
-	if(unit_1_idx == 4 ) {
+	if(unit_1_idx == LB ) {
 
-	    if(unit_2_idx == 4 ) {
+	    if(unit_2_idx == LB ) {
 		convFactor = 1;
 	    }
 
 	    //To ounce: x16
-	    else if(unit_2_idx == 5) {
+	    else if(unit_2_idx == OZ) {
 		convFactor = 16;
 	    }
 	}
 	//Convert from Ounce to 
-	else if(unit_1_idx == 5) { 
+	else if(unit_1_idx == OZ) { 
 
 	    //To pound: x(1/16)
-	    if(unit_2_idx == 4) {
-		convFactor = 1/16;
+	    if(unit_2_idx == LB) {
+		convFactor = 1.0/16;
 	    }
 	    
-	    else if(unit_2_idx == 5) {
+	    else if(unit_2_idx == OZ) {
 		convFactor = 1;
 	    }
 	}
@@ -205,7 +244,7 @@ double get_convFactor_mass(int unit_1_idx, int unit_2_idx)
 	if( unitDistance > 0 ) {
 
 	    //if converting from pound
-	    if( unit_1_idx == 4 ) {
+	    if( unit_1_idx == LB ) {
 		int j;
 
 		//First Convert pound to Kilogram
@@ -218,7 +257,7 @@ double get_convFactor_mass(int unit_1_idx, int unit_2_idx)
 	    }
 
 	    //if converting from ounce
-	    else if( unit_1_idx == 5 ) {
+	    else if( unit_1_idx == OZ ) {
 		int j;
 
 		//First convert ounce to kilogram
@@ -234,7 +273,7 @@ double get_convFactor_mass(int unit_1_idx, int unit_2_idx)
 	else if ( unitDistance < 0 ) {
 
 	    //If converting to pound
-	    if( unit_2_idx == 4 ) {
+	    if( unit_2_idx == LB ) {
 		int j;
 
 		//Fisrt Convert to pound
@@ -247,7 +286,7 @@ double get_convFactor_mass(int unit_1_idx, int unit_2_idx)
 	    }
 
 	    //If converting to ounce
-	    else if( unit_2_idx == 5 ) {
+	    else if( unit_2_idx == OZ ) {
 		int j;
 		
 		//First convert to ounce
@@ -282,7 +321,7 @@ double get_convFactor_metric(int unit_1_idx, int unit_2_idx)
 
 	//correction scale factor
 	for( i = unit_1_idx + 1; i <= unit_2_idx; i++) {
-	    if( i >= 12 && i <= 17 ) {
+	    if( i >= CENTI && i <= KILO ) {
 		correction++;
 	    }
 	}
@@ -326,34 +365,35 @@ double get_convFactor_length_SI(int unit_1_idx, int unit_2_idx)
     unitDistance = unit_2_idx - unit_1_idx;
 
     if( unitDistance > 0 ) {
-	if( unit_1_idx == 23 ) {
-	    if( unitDistance == 1 ) 
-		convFactor = 1/10;
+	if( unit_1_idx == MM ) {
+	    if( unitDistance == 1 )
+		convFactor = 1.0/10;
+     
 	    
 	    else if( unitDistance == 2 ) 
-		convFactor = 1 / (10 * 100);
+		convFactor = 1.0 / (10 * 100);
 	    
 	    else if( unitDistance == 3 ) 
-		convFactor = 1 / (10 * 100 * 1000);
+		convFactor = 1.0 / (10 * 100 * 1000);
 	    
 	}
 
-	else if( unit_1_idx == 24 ) {
+	else if( unit_1_idx == CM ) {
 	    if( unitDistance == 1 ) 
-		convFactor = 1/100;
+		convFactor = 1.0/100;
 	    
 	    else if( unitDistance == 2 ) 
-		convFactor = 1 / (100 * 1000);
+		convFactor = 1.0 / (100 * 1000);
 	    
 	}
 
-	else if( unit_1_idx == 25 ) 
-	    convFactor = 1/1000;
+	else if( unit_1_idx == M ) 
+	    convFactor = 1.0/1000;
 	
 		
     }
     else if( unitDistance < 0 ) {
-	if( unit_1_idx == 26 ) {
+	if( unit_1_idx == KM ) {
 	    if( abs(unitDistance) == 1 ) 
 		convFactor = 1000;
 	    
@@ -365,15 +405,16 @@ double get_convFactor_length_SI(int unit_1_idx, int unit_2_idx)
 	    
 	}
 
-	else if( unit_1_idx == 25 ) {
-	    if( abs(unitDistance) == 1 ) 
+	else if( unit_1_idx == M ) {
+	    if( abs(unitDistance) == 1 )
 		convFactor = 100;
+  
 	    
 	    else if( abs(unitDistance) == 2 ) 
 		convFactor = 10 * 100;
 	    
 	}
-        else if( unit_1_idx == 24 ) 
+        else if( unit_1_idx == CM ) 
 	    convFactor = 10;	
     }
 
@@ -388,34 +429,34 @@ double get_convFactor_length_imperial(int unit_1_idx, int unit_2_idx)
     unitDistance = unit_2_idx - unit_1_idx;
 
     if( unitDistance > 0 ) {
-	if( unit_1_idx == 27 ) {
+	if( unit_1_idx == IN ) {
 	    if( unitDistance == 1 ) 
-		convFactor = 1 / 12;
+		convFactor = 1.0 / 12;
 	    
 	    else if( unitDistance == 2 ) 
-		convFactor = 1 / (12 * 3);
+		convFactor = 1.0 / (12 * 3);
 	    
 	    else if( unitDistance == 3 ) 
-		convFactor = 1 / (12 * 3 * 1760);
+		convFactor = 1.0 / (12 * 3 * 1760);
 	    
 	}
 
-	else if( unit_1_idx == 28 ) {
+	else if( unit_1_idx == FT ) {
 	    if( unitDistance == 1 ) 
-		convFactor = 1/3;
+		convFactor = 1.0/3;
 	    
 	    else if( unitDistance == 2 ) 
-		convFactor = 1 / (3 * 1760);
+		convFactor = 1.0 / (3 * 1760);
 	    
 	}
 
-	else if( unit_1_idx == 29 ) 
-	    convFactor = 1/1760;
+	else if( unit_1_idx == YD ) 
+	    convFactor = 1.0/1760;
 	
 		
     }
     else if( unitDistance < 0 ) {
-	if( unit_1_idx == 30 ) {
+	if( unit_1_idx == MILE ) {
 	    if( abs(unitDistance) == 1 ) 
 		convFactor = 1760;
 	    
@@ -427,7 +468,7 @@ double get_convFactor_length_imperial(int unit_1_idx, int unit_2_idx)
 	    
 	}
 
-	else if( unit_1_idx == 29 ) {
+	else if( unit_1_idx == YD ) {
 	    if( abs(unitDistance) == 1 ) 
 		convFactor = 3;
 	    
@@ -435,7 +476,7 @@ double get_convFactor_length_imperial(int unit_1_idx, int unit_2_idx)
 		convFactor = 12 * 3;
 	    
 	}
-        else if( unit_1_idx == 28 ) 
+        else if( unit_1_idx == FT ) 
 	    convFactor = 12;	
     }
 
@@ -448,15 +489,15 @@ double get_convFactor_length(int unit_1_idx, int unit_2_idx)
 
     
     //case 1: conversion between SI units
-    if( (unit_1_idx >= 23 && unit_1_idx <= 26) &&
-	(unit_2_idx >= 23 && unit_2_idx <= 26) )
+    if( (unit_1_idx >= MM && unit_1_idx <= KM) &&
+	(unit_2_idx >= MM && unit_2_idx <= KM) )
     {
 	convFactor = get_convFactor_length_SI(unit_1_idx, unit_2_idx);
     }
 
     //case 2: Conversion between Imperial units
-    else if( (unit_1_idx >= 27 && unit_1_idx <= 30) &&
-	(unit_2_idx >= 27 && unit_2_idx <= 30) )
+    else if( (unit_1_idx >= IN && unit_1_idx <= MILE) &&
+	(unit_2_idx >= IN && unit_2_idx <= MILE) )
     {
 	convFactor = get_convFactor_length_imperial(unit_1_idx, unit_2_idx);
     }
@@ -465,23 +506,23 @@ double get_convFactor_length(int unit_1_idx, int unit_2_idx)
     else
     {
 	//SI to imperial
-	if(unit_1_idx >= 23 && unit_1_idx <= 26) {
+	if(unit_1_idx >= MM && unit_1_idx <= KM) {
 	    //change unit 1 to corresponding impeirial
 	    switch (unit_1_idx) {
-		case 23:
-		    convFactor = get_convFactor_length_imperial(27, unit_2_idx);
+		case MM:
+		    convFactor = get_convFactor_length_imperial(IN, unit_2_idx);
 		    convFactor = convFactor / 25.4;
 		    break;
-		case 24:
-		    convFactor = get_convFactor_length_imperial(27, unit_2_idx);
+		case CM:
+		    convFactor = get_convFactor_length_imperial(IN, unit_2_idx);
 		    convFactor = convFactor / 2.54;
 		    break;
-		case 25:
-		    convFactor = get_convFactor_length_imperial(29, unit_2_idx);
+		case M:
+		    convFactor = get_convFactor_length_imperial(YD, unit_2_idx);
 		    convFactor = convFactor * 1.09 ;
 		    break;
-		case 26:
-		    convFactor = get_convFactor_length_imperial(30, unit_2_idx);
+		case KM:
+		    convFactor = get_convFactor_length_imperial(MILE, unit_2_idx);
 		    convFactor = convFactor / 1.6;
 		    break;
 	        default:
@@ -494,20 +535,20 @@ double get_convFactor_length(int unit_1_idx, int unit_2_idx)
 	else {
 	    //change unit 1 to corresponding si
 	   switch (unit_1_idx) {
-	        case 27: //inch
-		    convFactor = get_convFactor_length_SI(24, unit_2_idx);
+	        case IN: //inch
+		    convFactor = get_convFactor_length_SI(CM, unit_2_idx);
 		    convFactor = convFactor * 2.54;
 		    break;
-	        case 28: //ft
-		    convFactor = get_convFactor_length_SI(24, unit_2_idx);
+	        case FT: //ft
+		    convFactor = get_convFactor_length_SI(CM, unit_2_idx);
 		    convFactor = convFactor * 30.48;
 		    break;
-	        case 29: //yd
-		    convFactor = get_convFactor_length_SI(25, unit_2_idx);
+	        case YD: //yd
+		    convFactor = get_convFactor_length_SI(M, unit_2_idx);
 		    convFactor = convFactor / 1.09 ;
 		    break;
-	        case 30: //mile
-		    convFactor = get_convFactor_length_SI(26, unit_2_idx);
+	        case MILE: //mile
+		    convFactor = get_convFactor_length_SI(KM, unit_2_idx);
 		    convFactor = convFactor * 1.6;
 		    break;
 	        default:
@@ -518,7 +559,124 @@ double get_convFactor_length(int unit_1_idx, int unit_2_idx)
 
     return convFactor;   
 }
+//Conversion function 4: Time scale
+double get_convFactor_time(int unit_1_idx, int unit_2_idx)
+{
+     double convFactor = 1;
+     int unitDistance;
+     int i;
 
-//Conversion function 4:
+     unitDistance = unit_2_idx - unit_1_idx;
+
+     if( unitDistance > 0 ) {
+	 for( i = 0; i < unitDistance; i++ ) {
+	     convFactor = convFactor / 60;
+	 }
+	 
+     }
+     else if( unitDistance < 0 ) {
+	 for( i = 0; i < abs(unitDistance); i++ ) {
+	     convFactor = convFactor * 60;
+	 } 
+     }
+
+     return convFactor;   
+    
+}
+
+//Conversion function 5: Velocity conversion
+
+double get_convFactor_velocity(int unit_1_idx, int unit_2_idx)
+{
+    int unit1, unit2;
+    double convFactor = 1;
+
+    if( unit_1_idx != unit_2_idx ) {
+
+	//1. Check if the conversion involves knott
+	 if( unit_1_idx == KN ) {
+	     convFactor = convFactor * 1.85;
+	     unit_1_idx = KM_H;
+	 }
+    
+	 if( unit_2_idx == KN ) {
+	     convFactor = convFactor / 1.85;
+	     unit_2_idx = KM_H;
+	 }
+
+	 //2. Time scale conversion
+	if( (unit_1_idx % 2) != (unit_2_idx % 2) ) {
+
+	    // x/sec to x hour
+	    if( unit_1_idx % 2 == 0 ) {
+		convFactor = convFactor * get_convFactor_time(HR, SEC);
+	    }
+
+	    // x/hr to x/sec
+	    else {
+		convFactor = convFactor * get_convFactor_time(SEC, HR);
+	    }
+	}
+
+	//Get length unit of unit 1
+	switch (unit_1_idx) {
+	    case M_S:
+	    case M_H:
+		unit1 = M;
+		break;
+		
+	    case KM_S:
+	    case KM_H:
+		unit1 = KM;
+		break;
+
+	    case FT_S:
+	    case FT_H:
+		unit1 = FT;
+		break;
+
+	    case MI_S:
+	    case MI_H:
+		unit1 = MILE;
+		break;
+		
+	    default:
+		break;
+	}
+
+	//Get length unit of unit 2
+	switch (unit_2_idx) {
+	    case M_S:
+	    case M_H:
+		unit2 = M;
+		break;
+		
+	    case KM_S:
+	    case KM_H:
+		unit2 = KM;
+		break;
+
+	    case FT_S:
+	    case FT_H:
+		unit2 = FT;
+		break;
+
+	    case MI_S:
+	    case MI_H:
+		unit2 = MILE;
+		break;
+		
+	    default:
+		break;
+	}
+
+	convFactor = convFactor * get_convFactor_length(unit1, unit2);
+
+	 
+    }
+
+    return convFactor;   
+    
+}
 
 //Conversion function 5:
