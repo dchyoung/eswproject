@@ -17,7 +17,8 @@ void comp_prob(int floatDigit, char *file_out);
 void comp_hist(int distance, int floatDigit, char *file_out);
 //Function3: Standard deviation
 void comp_stdde(int floatDigit, char *file_out);
-
+//Function3: Variance
+void comp_vari(int floatDigit, char *file_out);
 
 
 #endif

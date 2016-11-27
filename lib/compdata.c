@@ -55,7 +55,11 @@ void computation(char *option, int floatDigit, char *file_out)
 	comp_stdde(floatDigit, file_out);
     }
 
-        
+    //Computation 5: Data's Variance
+    else if( !(strcmp(suboption, "vari")) ) {
+	comp_vari(floatDigit, file_out);
+    }
+
     
     
 
@@ -348,7 +352,7 @@ void comp_stdde(int floatDigit, char *file_out)
     fd_tmp = newFile("tmp");
 
 
-    //?. Count data and Copy from std input stream to temporary file
+    //3. Count data and Copy from std input stream to temporary file
     while(1) {
     
 	if( readWord(word, STDIN_FILENO) == 0 )
@@ -369,7 +373,7 @@ void comp_stdde(int floatDigit, char *file_out)
     }
 
 	
-    //?. Open tmporary1 file & Computation of total sum of each square.
+    //4. Open tmporary1 file & Computation of total sum of each square.
     fd_tmp = open("tmp", O_RDONLY);
 	
     while(i != 0) {
@@ -382,7 +386,7 @@ void comp_stdde(int floatDigit, char *file_out)
 	prob = atof(word);
 
 	//Compute weighted value
-	prob_1 = (prob / i)*(prob / i);
+	prob_1 = (prob * prob) / i;
 	prob_2 = prob / i;
 	sum_1 = sum_1 + prob_1;
 	sum_2 = sum_2 + prob_2;
@@ -396,7 +400,7 @@ void comp_stdde(int floatDigit, char *file_out)
 
 
 	//Convert double to string
-	fToStr(sum_1, floatDigit, word);;
+	fToStr(stdde, floatDigit, word);;
 
 	//Write to output file
 	n = write(fd, word, strlen(word));
@@ -417,3 +421,92 @@ void comp_stdde(int floatDigit, char *file_out)
     //remove temporary file
     remove("tem");
 }
+
+
+
+//Computation 5: Variance
+void comp_vari(int floatDigit, char *file_out)
+{
+
+    int fd, fd_tmp, n;
+    int i = 0;
+    double vari, prob , prob_1, prob_2, sum_1=0, sum_2 = 0;
+    char word[BUFLEN];
+    
+    //1. open file to write
+    fd = newFile(file_out);
+
+    //2. open temporary file
+    fd_tmp = newFile("tmp");
+
+
+    //3. Count data and Copy from std input stream to temporary file
+    while(1) {
+    
+	if( readWord(word, STDIN_FILENO) == 0 )
+	    break;
+	
+	strcat(word, " "); //Spacing each word
+	n = write(fd_tmp, word, strlen(word));
+
+
+	if(n == -1) {
+	    perror("write error");
+	    exit(errno);
+	}
+	i = i + 1;	 
+    }
+    if( i > 0) {
+	close(fd_tmp);
+    }
+
+	
+    //4. Open tmporary file & Computation of total sum.
+    fd_tmp = open("tmp", O_RDONLY);
+	
+    while(i != 0) {
+
+	//read word
+	if( readWord(word, fd_tmp) == 0 )
+	    break;
+
+	//Convert string to float 
+	prob = atof(word);
+
+	//Compute weighted value
+	prob_1 = (prob * prob) / i;
+	prob_2 = prob / i;
+	sum_1 = sum_1 + prob_1;
+	sum_2 = sum_2 + prob_2;
+
+    }
+
+
+    if(sum_1 >= 0 && sum_2 >= 0) {
+
+	vari = sum_1 - (sum_2 * sum_2);
+
+
+	//Convert double to string
+	fToStr(vari, floatDigit, word);;
+
+	//Write to output file
+	n = write(fd, word, strlen(word));
+
+	//Write error
+	if(n == -1) {
+	    perror("write fd error");
+	    exit(errno);
+	}
+    }
+  
+
+    close(fd);
+    close(fd_tmp);
+
+    //remove temporary file
+    remove("tem");
+}
+
+
+
