@@ -1,16 +1,16 @@
 CC = gcc
 OUTPUT = datamaster
-LIB = datapro 
-LIB_DIR = ../lib 
+LIB = datapro
+LIB_DIR = ../lib
 INC_DIR = ../inc
 OBJS = main.o
 INCS = $(INC_DIR)/convdata.h $(INC_DIR)/compdata.h
 
 $(OUTPUT): $(OBJS)
-	$(CC) -L$(LIB_DIR) $(OBJS) -l$(LIB) -lm -o $(OUTPUT)
+	$(CC) -L$(LIB_DIR) $(OBJS) -l$(LIB) -o $(OUTPUT)
 
 %.o: %.c $(INCS)
-	$(CC) -c -I$(INC_DIR) $< -o $@
+	$(CC) -c -I$(INC_DIR) $< -o $@ -
 
 clean:
 	rm *.o $(OUTPUT)
