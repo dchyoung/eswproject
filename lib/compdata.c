@@ -338,7 +338,7 @@ void comp_stdde(int floatDigit, char *file_out)
 
     int fd, fd_tmp, n;
     int i = 0;
-    double stdde, prob_1, prob_2 sum_1=0, sum_2 = 0;
+    double stdde, prob ,prob_1, prob_2, sum_1=0, sum_2 = 0;
     char word[BUFLEN];
     
     //1. open file to write
@@ -382,35 +382,32 @@ void comp_stdde(int floatDigit, char *file_out)
 	prob = atof(word);
 
 	//Compute weighted value
-	prob_1 = (prob_1 / i)*(prob_1 / i);
-	prob_2 = prob_2 / i;
+	prob_1 = (prob / i)*(prob / i);
+	prob_2 = prob / i;
 	sum_1 = sum_1 + prob_1;
 	sum_2 = sum_2 + prob_2;
 
-	}
+    }
 
 
     if(sum_1 >= 0 && sum_2 >= 0) {
 
+	stdde = sqrt(sum_1 - (sum_2 * sum_2));
+
+
 	//Convert double to string
 	fToStr(sum_1, floatDigit, word);;
 
-	//Convert double to string
-	fToStr(sum_2, floatDigit, word);;
-
 	//Write to output file
-	n = write(fd_temp, word, strlen(word));
+	n = write(fd, word, strlen(word));
 
 	//Write error
 	if(n == -1) {
-	    perror("write_fd_tem error");
+	    perror("write fd error");
 	    exit(errno);
 	}
     }
-
-
-
-    }
+  
 
 
     close(fd);
@@ -418,5 +415,5 @@ void comp_stdde(int floatDigit, char *file_out)
 
 
     //remove temporary file
-    remove("tmp");
+    remove("tem");
 }
