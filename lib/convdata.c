@@ -16,7 +16,7 @@
 //Master function that calls corresponding data conversion function
 void conversion(char* option, int floatDigit, char* file_out)
 {
-    int idx = 0, unit_1_idx, unit_2_idx;
+    int idx = 0, unit_1_idx, unit_2_idx, pi = 3.14;
     char unit_1[5];
     char unit_2[5];
     double convFactor;
@@ -115,8 +115,8 @@ void conversion(char* option, int floatDigit, char* file_out)
 
 
     //Conversion 8 : Temperature conversion
-    else if( (unit_1_idx >= F. && unit_1_idx <= C.) &&
-	(unit_2_idx >= F. && unit_2_idx <= C.) )
+    else if( (unit_1_idx >= F && unit_1_idx <= C) &&
+	(unit_2_idx >= F && unit_2_idx <= C) )
     {
 	//Get conversion scale factor for the units
 	convFactor = get_convFactor_temper(unit_1_idx, unit_2_idx);
@@ -162,7 +162,7 @@ int get_unit_idx(char* unit)
 	"rad", "deg", "pi" ,
 
 	//Temperature Unit (46 ~ 47)
-	"F.", "C."
+	"F", "C"
 
 	
     };
@@ -733,12 +733,20 @@ double get_convFactor_velocity(int unit_1_idx, int unit_2_idx)
 
 
 //Conversion function 7 : Angle conversion
-double get_convFactor_angle(int unit_1_idx, int unit_2_idx);
+double get_convFactor_angle(int unit_1_idx, int unit_2_idx)
+{
+    int unit1, unit2;
+    double convFactor = 1;
 
+}
 
 //Conversion function 8 : Temperature conversion
-double get_convFactor_temper(int unit_1_idx, int unit_2_idx);
+double get_convFactor_temper(int unit_1_idx, int unit_2_idx)
+{
+    int unit1, unit2;
+    double convFactor = 1;
 
+}
 
 //Conversion function 9:
 
