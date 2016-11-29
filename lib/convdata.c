@@ -25,6 +25,10 @@ void conversion(char* option, int floatDigit, char* file_out)
     idx = parseToken(idx, option, unit_1, '-');
     parseToken(idx, option, unit_2, '-');
 
+-conv pi
+
+
+
     //Convert unit string to corresponding unit index
     unit_1_idx = get_unit_idx(unit_1);
     unit_2_idx = get_unit_idx(unit_2);
@@ -86,42 +90,29 @@ void conversion(char* option, int floatDigit, char* file_out)
     }
 
     //Conversion 6 : pi(3.14) conversion
-    else if( (unit_1_idx >= MM && unit_1_idx <= MILE) &&
-	(unit_2_idx >= MM && unit_2_idx <= MILE) )
+    else if( (unit_1_idx == _PI) )
     {
 	//Get conversion scale factor for the units
-	convFactor = get_convFactor_length(unit_1_idx, unit_2_idx);
+	convFactor = pi;
 	//##debug
 	printf("Conversion Factor == %f\n", convFactor);
 	//##debug
 	_convert(convFactor, floatDigit, file_out);
     }
     
-    //Conversion 7 : from angle to radian conversion
-    else if( (unit_1_idx >= MM && unit_1_idx <= MILE) &&
-	(unit_2_idx >= MM && unit_2_idx <= MILE) )
+    //Conversion 7 : xxxxxxx from degree to radian conversion
+    else if( (unit_1_idx >= RAD && unit_1_idx <= DEG) &&
+	(unit_2_idx >= RAD && unit_2_idx <= DEG) )
     {
 	//Get conversion scale factor for the units
-	convFactor = get_convFactor_length(unit_1_idx, unit_2_idx);
+	convFactor = get_convFactor_angle(unit_1_idx, unit_2_idx);
 	//##debug
 	printf("Conversion Factor == %f\n", convFactor);
 	//##debug
 	_convert(convFactor, floatDigit, file_out);
     }
 
-    //Conversion 8 : from radian to degree conversion
-    else if( (unit_1_idx >= MM && unit_1_idx <= MILE) &&
-	(unit_2_idx >= MM && unit_2_idx <= MILE) )
-    {
-	//Get conversion scale factor for the units
-	convFactor = get_convFactor_length(unit_1_idx, unit_2_idx);
-	//##debug
-	printf("Conversion Factor == %f\n", convFactor);
-	//##debug
-	_convert(convFactor, floatDigit, file_out);
-    }
-
-    //Conversion 9:
+    //Conversion 8:
 
 
 
@@ -151,8 +142,10 @@ int get_unit_idx(char* unit)
 	"sec", "min", "hr",
 
 	//Velocity Unit (34 ~ 42)
-	"m/s", "m/h", "km/s", "km/h", "ft/s", "ft/h", "mi/s", "mi/h", "kn"
+	"m/s", "m/h", "km/s", "km/h", "ft/s", "ft/h", "mi/s", "mi/h", "kn",
 
+	//Angle Unit (43 ~ 45)
+	"rad", "deg", "pi"
 	
     };
     

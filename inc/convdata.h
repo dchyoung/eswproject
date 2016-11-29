@@ -2,7 +2,7 @@
 #define CONVDATA_H
 
 /*Unit ID number Macros*/
-#define NUM_OF_UNITS 43
+#define NUM_OF_UNITS 46
 
 //Mass units
 #define MCG    0
@@ -57,10 +57,10 @@
 #define MI_H   41
 #define KN     42
 
-//angle units
-#define rad    43
-#define deg    44
-
+//Angle units
+#define RAD    43
+#define DEG    44
+#define _PI    45
 
 //Master index function that calls each conversion
 void conversion(char *option, int floatDigit, char *file_out);
