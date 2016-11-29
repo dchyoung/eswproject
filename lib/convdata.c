@@ -8,6 +8,7 @@
 
 #include <errno.h>
 #include <unistd.h>
+#include <math.h>
 
 #include "parser.h"
 #include "convdata.h"
@@ -24,8 +25,6 @@ void conversion(char* option, int floatDigit, char* file_out)
     //Each unit is seperated by '-' character
     idx = parseToken(idx, option, unit_1, '-');
     parseToken(idx, option, unit_2, '-');
-
--conv pi
 
 
 
@@ -89,6 +88,7 @@ void conversion(char* option, int floatDigit, char* file_out)
 	_convert(convFactor, floatDigit, file_out);
     }
 
+
     //Conversion 6 : pi(3.14) conversion
     else if( (unit_1_idx == _PI) )
     {
@@ -100,7 +100,8 @@ void conversion(char* option, int floatDigit, char* file_out)
 	_convert(convFactor, floatDigit, file_out);
     }
     
-    //Conversion 7 : xxxxxxx from degree to radian conversion
+
+    //Conversion 7 : Angle conversion
     else if( (unit_1_idx >= RAD && unit_1_idx <= DEG) &&
 	(unit_2_idx >= RAD && unit_2_idx <= DEG) )
     {
@@ -112,8 +113,21 @@ void conversion(char* option, int floatDigit, char* file_out)
 	_convert(convFactor, floatDigit, file_out);
     }
 
-    //Conversion 8:
 
+    //Conversion 8 : Temperature conversion
+    else if( (unit_1_idx >= F. && unit_1_idx <= C.) &&
+	(unit_2_idx >= F. && unit_2_idx <= C.) )
+    {
+	//Get conversion scale factor for the units
+	convFactor = get_convFactor_temper(unit_1_idx, unit_2_idx);
+	//##debug
+	printf("Conversion Factor == %f\n", convFactor);
+	//##debug
+	_convert(convFactor, floatDigit, file_out);
+    }
+
+
+    //Conversion 9:
 
 
 
@@ -145,7 +159,11 @@ int get_unit_idx(char* unit)
 	"m/s", "m/h", "km/s", "km/h", "ft/s", "ft/h", "mi/s", "mi/h", "kn",
 
 	//Angle Unit (43 ~ 45)
-	"rad", "deg", "pi"
+	"rad", "deg", "pi" ,
+
+	//Temperature Unit (46 ~ 47)
+	"F.", "C."
+
 	
     };
     
@@ -711,18 +729,17 @@ double get_convFactor_velocity(int unit_1_idx, int unit_2_idx)
 }
 
 //Conversion function 6 : pi conversion
-double get_convFactor_pi(int unit_1_idx, int unit_2_idx);
-
-
-//Conversion function 7 : radian conversion
-double get_convFactor_radian(int unit_1_idx, int unit_2_idx);
-
-
-//Conversion function 8 : degree conversion
-double get_convFactor_degree(int unit_1_idx, int unit_2_idx);
 
 
 
+//Conversion function 7 : Angle conversion
+double get_convFactor_angle(int unit_1_idx, int unit_2_idx);
 
+
+//Conversion function 8 : Temperature conversion
+double get_convFactor_temper(int unit_1_idx, int unit_2_idx);
+
+
+//Conversion function 9:
 
 

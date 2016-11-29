@@ -62,6 +62,12 @@
 #define DEG    44
 #define _PI    45
 
+
+//Temperature units
+#define F.     46
+#define C.     47
+
+
 //Master index function that calls each conversion
 void conversion(char *option, int floatDigit, char *file_out);
 
@@ -90,13 +96,23 @@ double get_convFactor_time(int unit_1_idx, int unit_2_idx);
 /*Conversion 5: Velocity units (m/s, m/h, km/s, km/h, ft/s, ft/h, mi/s, mi/h, kn)*/
 double get_convFactor_velocity(int unit_1_idx, int unit_2_idx);
 
-/*Conversion 6 : pi units (deg)*/
-double get_convFactor_pi(int unit_1_idx, int unit_2_idx);
+/*Conversion 6 : pi units (deg or rad)*/
 
-/*Conversion 7 : radian units (rad)*/
+
+/*Conversion 7 : Angle units (rad, deg)*/
 double get_convFactor_radian(int unit_1_idx, int unit_2_idx);
 
-/*Conversion 8 : degree units (deg)*/
-double get_convFactor_degree(int unit_1_idx, int unit_2_idx);
+
+/*Conversion 8 : Temperature units (F. , C.) */
+double get_convFactor_temper(int unit_1_idx, int unit_2_idx);
+
+
+
+/*Conversion 9:
+
+
+
+
 
 #endif
+
