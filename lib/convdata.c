@@ -728,16 +728,12 @@ double get_convFactor_velocity(int unit_1_idx, int unit_2_idx)
     
 }
 
-//Conversion function 6 : pi conversion
-
-
-
-//Conversion function 7 : Angle conversion
+//Conversion function 6 : Angle conversion
 double get_convFactor_angle(int unit_1_idx, int unit_2_idx)
 {
     int unit1, unit2;
     double convFactor = 1;
-
+    return convFactor;
 }
 
 //Conversion function 8 : Temperature conversion
@@ -745,6 +741,7 @@ double get_convFactor_temper(int unit_1_idx, int unit_2_idx)
 {
     int unit1, unit2;
     double convFactor = 1;
+    return convFactor;
 
 }
 

@@ -100,7 +100,7 @@ double get_convFactor_velocity(int unit_1_idx, int unit_2_idx);
 
 
 /*Conversion 7 : Angle units (rad, deg)*/
-double get_convFactor_radian(int unit_1_idx, int unit_2_idx);
+double get_convFactor_angle(int unit_1_idx, int unit_2_idx);
 
 
 /*Conversion 8 : Temperature units (F , C ) */
