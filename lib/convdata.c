@@ -16,7 +16,7 @@
 //Master function that calls corresponding data conversion function
 void conversion(char* option, int floatDigit, char* file_out)
 {
-    int idx = 0, unit_1_idx, unit_2_idx, pi = 3.14;
+    int idx = 0, unit_1_idx, unit_2_idx;
     char unit_1[5];
     char unit_2[5];
     double convFactor;
@@ -92,6 +92,7 @@ void conversion(char* option, int floatDigit, char* file_out)
     //Conversion 6 : pi(3.14) conversion
     else if( (unit_1_idx == _PI) )
     {
+	double pi = 3.14;
 	//Get conversion scale factor for the units
 	convFactor = pi;
 	//##debug
