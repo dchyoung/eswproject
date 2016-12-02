@@ -92,6 +92,7 @@ void conversion(char* option, int floatDigit, char* file_out)
     //Conversion 6 : pi(3.14) conversion
     else if( (unit_1_idx == _PI) )
     {
+	//
 	double pi = 3.14;
 	//Get conversion scale factor for the units
 	convFactor = pi;
@@ -116,8 +117,8 @@ void conversion(char* option, int floatDigit, char* file_out)
 
 
     //Conversion 8 : Temperature conversion
-    else if( (unit_1_idx >= F && unit_1_idx <= C) &&
-	(unit_2_idx >= F && unit_2_idx <= C) )
+    else if( (unit_1_idx >= F && unit_1_idx <= K) &&
+	(unit_2_idx >= F && unit_2_idx <= K) )
     {
 	//Get conversion scale factor for the units
 	convFactor = get_convFactor_temper(unit_1_idx, unit_2_idx);
@@ -162,8 +163,8 @@ int get_unit_idx(char* unit)
 	//Angle Unit (43 ~ 45)
 	"rad", "deg", "pi" ,
 
-	//Temperature Unit (46 ~ 47)
-	"F", "C"
+	//Temperature Unit (46 ~ 48)
+	"F", "C", "K"
 
 	
     };
@@ -470,6 +471,7 @@ double get_convFactor_length_SI(int unit_1_idx, int unit_2_idx)
 
     return convFactor;
 }
+
 double get_convFactor_length_imperial(int unit_1_idx, int unit_2_idx)
 {
     double convFactor = 1;
@@ -732,19 +734,104 @@ double get_convFactor_velocity(int unit_1_idx, int unit_2_idx)
 //Conversion function 6 : Angle conversion
 double get_convFactor_angle(int unit_1_idx, int unit_2_idx)
 {
-    int unit1, unit2;
-    double convFactor = 1;
+	double convFactor = 1;
+
+	// 1.
+	if( unit_1_idx == RAD ) {
+		// 
+		convFactor = convFactor * (3.14/180);
+    	}
+
+	// 2.
+	else if( unit_1_idx == DEG ) {
+		//
+		convFactor = convFactor * (180/3.14);
+	}
+
+	// 3. error
+	else if ( unit_1_idx != DEG && unit_1_idx != RAD) {
+		;
+	}
+
     return convFactor;
+
 }
 
 //Conversion function 8 : Temperature conversion
 double get_convFactor_temper(int unit_1_idx, int unit_2_idx)
 {
-    int unit1, unit2;
-    double convFactor = 1;
+   double convFactor = 1;
+   int unitDistance;
+
+   //
+   unitDistance = unit_2_idx - unit_1_idx;
+
+   //
+   if( unitDistance > 0 ) {
+	//
+	if( unit_1_idx == F ) {
+		//
+		if( unitDistance == 1 )
+			convFactor = 1.0/10;
+     
+		//
+		else if( unitDistance == 2 ) 
+			convFactor = 1.0 / (10 * 100);
+
+		// error
+		else if( abs(unitDistance) >= 3 ) 
+			;
+	   
+	}
+
+	//
+	else if( unit_1_idx == C ) {
+		//
+		if( unitDistance == 1 ) 
+			convFactor = 1.0/100;
+
+		// over is error
+		else if( unitDistance >= 2 ) 
+			;
+	}
+   }
+
+   //
+   else if( unitDistance < 0 ) {
+	if( unit_1_idx == K ) {
+		//
+		if( abs(unitDistance) == 1 ) 
+			convFactor = 1760;
+	    	
+		//
+		else if( abs(unitDistance) == 2 ) 
+		convFactor = 3 * 1760;
+
+		// error
+		else if( abs(unitDistance) >= 3 ) 
+			;
+	   
+	}
+
+	//
+	else if( unit_1_idx == C ) {
+		//
+		if( abs(unitDistance) == 1 ) 
+			convFactor = 3;
+
+		// error
+		else if( abs(unitDistance) >= 2 ) 
+			;
+	    
+	}
+
+   }
+
     return convFactor;
 
 }
+
+
 
 //Conversion function 9:
 

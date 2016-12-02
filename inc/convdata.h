@@ -2,7 +2,7 @@
 #define CONVDATA_H
 
 /*Unit ID number Macros*/
-#define NUM_OF_UNITS 48
+#define NUM_OF_UNITS 49
 
 //Mass units
 #define MCG    0
@@ -66,6 +66,7 @@
 //Temperature units
 #define F      46
 #define C      47
+#define K      48
 
 
 //Master index function that calls each conversion
@@ -103,7 +104,7 @@ double get_convFactor_velocity(int unit_1_idx, int unit_2_idx);
 double get_convFactor_angle(int unit_1_idx, int unit_2_idx);
 
 
-/*Conversion 8 : Temperature units (F , C ) */
+/*Conversion 8 : Temperature units (F , C , K ) */
 double get_convFactor_temper(int unit_1_idx, int unit_2_idx);
 
 
