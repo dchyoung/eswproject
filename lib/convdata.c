@@ -129,9 +129,113 @@ void conversion(char* option, int floatDigit, char* file_out)
     }
 
 
-    //Conversion 9:
+    //Conversion 9 : Volume Conversion
+    else if( (unit_1_idx >= ML && unit_1_idx <= YD3) &&
+	(unit_2_idx >= ML && unit_2_idx <= YD3) )
+    {
+	//assign same unit index for cm3, cc, and ml
+	if( (unit_1_idx >= ML && unit_1_idx <= CM3) ) {
+	    unit_1_idx = CM3;
+	}
 
+	if( (unit_2_idx >= ML && unit_2_idx <= CM3) ) {
+	    unit_2_idx = CM3;
+	}
 
+	//Conversion between SI units
+	if( (unit_1_idx >= ML && unit_1_idx <= M3) &&
+	    (unit_2_idx >= ML && unit_2_idx <= M3) )
+	{
+	    //Get conversion scale factor for the units
+	    convFactor = get_convFactor_volume_SI(unit_1_idx, unit_2_idx);
+	}
+
+	//Conversion between imperial
+	else if ( (unit_1_idx >= IN3 && unit_1_idx <= YD3) &&
+		  (unit_2_idx >= IN3 && unit_2_idx <= YD3) )
+	{
+	    //Get conversion scale factor for the units
+	    convFactor = get_convFactor_volume_imperial(unit_1_idx, unit_2_idx);
+	}
+
+	//Conversion between SI and Imperial
+	else {
+	    //SI to imperial
+	    if( (unit_1_idx >= ML && unit_1_idx <= M3) ){
+		switch (unit_1_idx) {
+		    case CM3:
+			unit_1_idx = IN3;
+			convFactor = 0.061;
+		        break;
+		
+		    case DL:
+			unit_1_idx = OZ_V;
+			convFactor = 3.38;
+		        break;
+		    
+		    case L:
+			unit_1_idx = GAL;
+			convFactor = 0.26;
+			break;  
+
+		    case M3:
+			unit_1_idx = YD3;
+			convFactor = 1.30;
+			break;
+		    default:
+		        break;
+		}
+		
+		convFactor = convFactor * get_convFactor_volume_imperial(unit_1_idx, unit_2_idx);
+	    }
+	    
+	    //Imperial to SI
+	    else {
+		switch (unit_1_idx) {
+		    case IN3:
+			unit_1_idx = CM3;
+			convFactor = 16.38;
+		        break;
+		
+		    case OZ_V:
+			unit_1_idx = DL;
+			convFactor = 0.29;
+		        break;
+		    
+		    case GAL:
+			unit_1_idx = L;
+			convFactor = 3.78;
+			break;  
+
+		    case FT3:
+			unit_1_idx = L;
+			convFactor = 28.31;
+			break;
+		    case BBL:
+			unit_1_idx = M3;
+			convFactor = 0.15;
+			break;
+		    case YD3:
+			unit_1_idx = M3;
+			convFactor = 0.76;
+			break;
+			
+		    default:
+		        break;
+		}
+		convFactor = convFactor * get_convFactor_volume_imperial(unit_1_idx, unit_2_idx);
+	    }	    
+	}	    
+	
+	//##debug
+	printf("Conversion Factor == %f\n", convFactor);
+	//##debug
+	_convert(convFactor, floatDigit, file_out);
+    }
+
+    
+
+    //Conversion 10:
 
     //....
     else {
@@ -164,8 +268,13 @@ int get_unit_idx(char* unit)
 	"rad", "deg", "pi" ,
 
 	//Temperature Unit (46 ~ 48)
-	"F", "C", "K"
+	"F", "C", "K",
 
+	//Volume SI (49 ~ 54)
+	"ml", "cc", "cm3", "dl", "l", "m3",
+
+	//Volume Imperial (55 ~ 60)
+	"in3", "oz_v", "gal", "ft3", "bbl", "yd3"
 	
     };
     
@@ -833,6 +942,138 @@ double get_convFactor_temper(int unit_1_idx, int unit_2_idx)
 
 
 
-//Conversion function 9:
+//Conversion function 9: Volume SI
+double get_convFactor_volume_SI(int unit_1_idx, int unit_2_idx)
+{
+    double convFactor = 1;
+    switch (unit_1_idx) {
+	    case CM3:
+		if( unit_2_idx == DL )
+		    convFactor = 1.0/100;
+		else if ( unit_2_idx == L )
+		    convFactor = 1.0/(100 * 10);
+		else if ( unit_2_idx == M3 )
+		    convFactor = 1.0/(100 * 10 * 1000);			
+		break;
+		
+	    case DL:
+		if( unit_2_idx == CM3 )
+		    convFactor = 100;
+		else if ( unit_2_idx == L )
+		    convFactor = 1.0/(10);
+		else if ( unit_2_idx == M3 )
+		    convFactor = 1.0/(10 * 1000);			
+		break;
+
+	    case L:
+	        if( unit_2_idx == CM3 )
+		    convFactor = (100 * 10);
+		else if ( unit_2_idx == DL )
+		    convFactor = 10;
+		else if ( unit_2_idx == M3 )
+		    convFactor = 1.0/(1000);			
+		break;
+
+	    case M3:
+		if( unit_2_idx == CM3 )
+		    convFactor = 1000 * 10 * 100;
+		else if ( unit_2_idx == DL )
+		    convFactor = (1000 * 10);
+		else if ( unit_2_idx == L )
+		    convFactor = (1000);			
+		break;      
+		
+	    default:
+		break;
+	}
+    return convFactor;
+}
 
 
+double get_convFactor_volume_imperial(int unit_1_idx, int unit_2_idx)
+{
+    double convFactor = 1;
+    switch (unit_1_idx) {
+	    case IN3:
+		if( unit_2_idx == OZ_V )
+		    convFactor = 1.0/1.80;
+		else if ( unit_2_idx == GAL )
+		    convFactor = 1.0/(1.80 * 127.99);
+		else if ( unit_2_idx == FT3 )
+		    convFactor = 1.0/(1.80 * 127.99 * 7.48);
+		else if ( unit_2_idx == BBL )
+		    convFactor = 1.0 / (1.80 * 127.99 * 7.48 * 5.61);
+		else if( unit_2_idx == YD3 )
+		    convFactor = 1.0/(1.80 * 127.99 * 7.48 * 5.61 * 4.81);
+		break;
+		
+	    case OZ_V:
+	        if( unit_2_idx == IN3 )
+		    convFactor = 1.80;
+		else if ( unit_2_idx == GAL )
+		    convFactor = 1.0/(127.99);
+		else if ( unit_2_idx == FT3 )
+		    convFactor = 1.0/(127.99 * 7.48);
+		else if ( unit_2_idx == BBL )
+		    convFactor = 1.0 / (127.99 * 7.48 * 5.61);
+		else if( unit_2_idx == YD3 )
+		    convFactor = 1.0/(127.99 * 7.48 * 5.61 * 4.81);
+		break;
+
+	    case GAL:
+	        if( unit_2_idx == IN3 )
+		    convFactor = 1.80 * 127.99;
+		else if ( unit_2_idx == OZ_V )
+		    convFactor = (127.99);
+		else if ( unit_2_idx == FT3 )
+		    convFactor = 1.0/7.48;
+		else if ( unit_2_idx == BBL )
+		    convFactor = 1.0 / (7.48 * 5.61);
+		else if( unit_2_idx == YD3 )
+		    convFactor = 1.0/(7.48 * 5.61 * 4.81);
+		break;
+
+	    case FT3:
+	        if( unit_2_idx == IN3 )
+		    convFactor = 1.80 * 127.99 * 7.48;
+		else if ( unit_2_idx == OZ_V )
+		    convFactor = (127.99 * 7.48);
+		else if ( unit_2_idx == GAL )
+		    convFactor = 7.48;
+		else if ( unit_2_idx == BBL )
+		    convFactor = 1.0 / (5.61);
+		else if( unit_2_idx == YD3 )
+		    convFactor = 1.0/(5.61 * 4.81);
+		break;
+	    case BBL:
+	        if( unit_2_idx == IN3 )
+		    convFactor = 1.80 * 127.99 * 7.48 * 5.61;
+		else if ( unit_2_idx == OZ_V )
+		    convFactor = (127.99 * 7.48 * 5.61);
+		else if ( unit_2_idx == GAL )
+		    convFactor = 7.48 * 5.61;
+		else if ( unit_2_idx == FT3 )
+		    convFactor = 5.61;
+		else if( unit_2_idx == YD3 )
+		    convFactor = 1.0/4.81;
+		break;
+		
+	    case YD3:
+	        if( unit_2_idx == IN3 )
+		    convFactor = 1.80 * 127.99 * 7.48 * 5.61 * 4.81;
+		else if ( unit_2_idx == OZ_V )
+		    convFactor = (127.99 * 7.48 * 5.61 * 4.81);
+		else if ( unit_2_idx == GAL )
+		    convFactor = 7.48 * 5.61 * 4.81;
+		else if ( unit_2_idx == FT3 )
+		    convFactor = 5.61 * 4.81;
+		else if( unit_2_idx == BBL )
+		    convFactor = 4.81;
+		break;
+		
+	    default:
+		break;
+	}
+    return convFactor;
+}
+//Conversion function 10:

@@ -2,7 +2,7 @@
 #define CONVDATA_H
 
 /*Unit ID number Macros*/
-#define NUM_OF_UNITS 49
+#define NUM_OF_UNITS 61
 
 //Mass units
 #define MCG    0
@@ -68,6 +68,21 @@
 #define C      47
 #define K      48
 
+//Volume units
+#define ML     49
+#define CC     50
+#define CM3    51
+#define DL     52
+#define L      53
+#define M3     54
+
+#define IN3    55
+#define OZ_V   56
+#define GAL    57
+#define FT3    58
+#define BBL    59
+#define YD3    60
+
 
 //Master index function that calls each conversion
 void conversion(char *option, int floatDigit, char *file_out);
@@ -109,8 +124,9 @@ double get_convFactor_temper(int unit_1_idx, int unit_2_idx);
 
 
 
-/*Conversion 9: */
-
+/*Conversion 9: Volume (ml, cc, cm3, dl, l, m3, in3, ft3, yd3, gal, bbl, oz)*/
+double get_convFactor_volume_SI(int unit_1_idx, int unit_2_idx); //Volume SI
+double get_convFactor_volume_imperial(int unit_1_idx, int unit_2_idx); //Volume Imperial
 
 
 
