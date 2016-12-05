@@ -120,7 +120,7 @@ double get_convFactor_angle(int unit_1_idx, int unit_2_idx);
 
 
 /*Conversion 8 : Temperature units (F , C , K ) */
-double get_convFactor_temper(int unit_1_idx, int unit_2_idx);
+void conv_temperature(int unit_1_idx, int unit_2_idx, int floatDigit, char *file_out);
 
 
 

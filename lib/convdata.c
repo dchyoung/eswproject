@@ -120,12 +120,8 @@ void conversion(char* option, int floatDigit, char* file_out)
     else if( (unit_1_idx >= F && unit_1_idx <= K) &&
 	(unit_2_idx >= F && unit_2_idx <= K) )
     {
-	//Get conversion scale factor for the units
-	convFactor = get_convFactor_temper(unit_1_idx, unit_2_idx);
-	//##debug
-	printf("Conversion Factor == %f\n", convFactor);
-	//##debug
-	_convert(convFactor, floatDigit, file_out);
+	//
+	conv_temperature(unit_1_idx, unit_2_idx, floatDigit, file_out);
     }
 
 
@@ -328,6 +324,7 @@ void _convert(double convFactor, int floatDigit, char* file_out)
 
     close(fd);
 }
+
 
 //Conversion 1: Conventional mass unit conversion
 //Input: unit number of mass units, Output: Scale factor between the units.
@@ -859,89 +856,111 @@ double get_convFactor_angle(int unit_1_idx, int unit_2_idx)
 
 	// 3. error
 	else if ( unit_1_idx != DEG && unit_1_idx != RAD) {
-		;
+		convFactor = convFactor * 1;
+		printf("input error\n");
 	}
 
     return convFactor;
 
 }
 
+
 //Conversion function 8 : Temperature conversion
-double get_convFactor_temper(int unit_1_idx, int unit_2_idx)
+void conv_temperature(int unit_1_idx, int unit_2_idx, int floatDigit, char *file_out)
 {
-   double convFactor = 1;
-   int unitDistance;
+    int fd;
+    double temper;
+    char word[BUFLEN];
+    
+    //1. open file to write
+    fd = newFile(file_out);
 
-   //
-   unitDistance = unit_2_idx - unit_1_idx;
+    //2. Read word by word, converting
+    while(1) {
+	int n;
+	
+	//read word
+	if( readWord(word, STDIN_FILENO) == 0 )
+	    break;
 
-   //
-   if( unitDistance > 0 ) {
+	//Convert string to float
+	temper = atof(word);
+    
 	//
-	if( unit_1_idx == F ) {
-		//
-		if( unitDistance == 1 )
-			convFactor = (convFactor - 32) * 9/5;
-     
-		//
-		else if( unitDistance == 2 ) 
-			convFactor = ((convFactor - 32) * 9/5) + 273.15;
+	if(unit_1_idx == F){
 
-		// error
-		else if( abs(unitDistance) >= 3 ) 
-			convFactor = convFactor*1;
-			printf("input error");
-	   
-	}
+	   //
+	   if(unit_2_idx == C){
+		temper = (temper - 32) / 1.8;
+	   }
 
-	//
-	else if( unit_1_idx == C ) {
-		//
-		if( unitDistance == 1 ) 
-			convFactor = convFactor + 273.15;
+	   //
+	   else if(unit_2_idx == K){
+		temper = ( (temper - 32) / 1.8 ) + 273.15;
+	   }
 
-		// over is error
-		else if( unitDistance >= 2 ) 
-			convFactor = convFactor*1;
-			printf("input error");
-	}
-   }
-
-   //
-   else if( unitDistance < 0 ) {
-	if( unit_1_idx == K ) {
-		//
-		if( abs(unitDistance) == 1 ) 
-			convFactor = convFactor - 273.15;
-	    	
-		//
-		else if( abs(unitDistance) == 2 ) 
-		convFactor = ((convFactor - 273.15) *9/5) + 32;
-
-		// error
-		else if( abs(unitDistance) >= 3 ) 
-			convFactor = convFactor*1;
-			printf("input error");
-
+	   // error
+	   else if (unit_2_idx != K && unit_2_idx != F && unit_2_idx != C){
+	   	temper = temper*1;
+		printf("input error\n");
+	   }
 	}
 
 	//
-	else if( unit_1_idx == C ) {
-		//
-		if( abs(unitDistance) == 1 ) 
-			convFactor = (convFactor * 9/5) + 32;
+	else if(unit_1_idx == C){
+	
+	   //
+	   if(unit_2_idx == F){
+		temper = (temper * 1.8) + 32;
+	   }
 
-		// error
-		else if( abs(unitDistance) >= 2 ) 
-			convFactor = convFactor*1;
-			printf("input error");
-	    
+	   //
+	   else if(unit_2_idx == K){
+		temper = temper + 273.15;
+	   }
+
+	   // error
+	   else if (unit_2_idx != K && unit_2_idx != F && unit_2_idx != C){
+	   	temper = temper*1;
+		printf("input error\n");
+	   }
 	}
 
-   }
+	//
+	else if(unit_1_idx == K){
 
-    return convFactor;
+	   //
+	   if(unit_2_idx == F){
+		temper = ( (temper - 273.15) * 1.8 ) + 32;
+	   }
 
+	   //
+	   else if(unit_2_idx == C){
+		temper = temper - 273.15;
+	   }
+
+	   // error
+	   else if (unit_2_idx != K && unit_2_idx != F && unit_2_idx != C){
+	   	temper = temper*1;
+		printf("input error\n");
+	   }
+	}
+    
+	//Convert float to string
+	fToStr(temper, floatDigit, word);
+	
+	//Write to outputfile
+	n = write(fd, word, strlen(word));
+
+	//write error
+	if( n == -1 ) {
+	    perror("write\n");
+	    exit(errno);
+	}	
+    }
+
+    printf("Conversion Factor == %f\n", temper);
+    close(fd);
 }
 
 
