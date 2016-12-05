@@ -881,15 +881,16 @@ double get_convFactor_temper(int unit_1_idx, int unit_2_idx)
 	if( unit_1_idx == F ) {
 		//
 		if( unitDistance == 1 )
-			convFactor = 1.0/10;
+			convFactor = (convFactor - 32) * 9/5;
      
 		//
 		else if( unitDistance == 2 ) 
-			convFactor = 1.0 / (10 * 100);
+			convFactor = ((convFactor - 32) * 9/5) + 273.15;
 
 		// error
 		else if( abs(unitDistance) >= 3 ) 
-			;
+			convFactor = convFactor*1;
+			printf("input error");
 	   
 	}
 
@@ -897,11 +898,12 @@ double get_convFactor_temper(int unit_1_idx, int unit_2_idx)
 	else if( unit_1_idx == C ) {
 		//
 		if( unitDistance == 1 ) 
-			convFactor = 1.0/100;
+			convFactor = convFactor + 273.15;
 
 		// over is error
 		else if( unitDistance >= 2 ) 
-			;
+			convFactor = convFactor*1;
+			printf("input error");
 	}
    }
 
@@ -910,27 +912,29 @@ double get_convFactor_temper(int unit_1_idx, int unit_2_idx)
 	if( unit_1_idx == K ) {
 		//
 		if( abs(unitDistance) == 1 ) 
-			convFactor = 1760;
+			convFactor = convFactor - 273.15;
 	    	
 		//
 		else if( abs(unitDistance) == 2 ) 
-		convFactor = 3 * 1760;
+		convFactor = ((convFactor - 273.15) *9/5) + 32;
 
 		// error
 		else if( abs(unitDistance) >= 3 ) 
-			;
-	   
+			convFactor = convFactor*1;
+			printf("input error");
+
 	}
 
 	//
 	else if( unit_1_idx == C ) {
 		//
 		if( abs(unitDistance) == 1 ) 
-			convFactor = 3;
+			convFactor = (convFactor * 9/5) + 32;
 
 		// error
 		else if( abs(unitDistance) >= 2 ) 
-			;
+			convFactor = convFactor*1;
+			printf("input error");
 	    
 	}
 
