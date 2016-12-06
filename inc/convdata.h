@@ -57,16 +57,17 @@
 #define MI_H   41
 #define KN     42
 
+
 //Angle units
 #define RAD    43
 #define DEG    44
 #define _PI    45
 
-
 //Temperature units
 #define F      46
 #define C      47
 #define K      48
+
 
 //Volume units
 #define ML     49
@@ -112,14 +113,15 @@ double get_convFactor_time(int unit_1_idx, int unit_2_idx);
 /*Conversion 5: Velocity units (m/s, m/h, km/s, km/h, ft/s, ft/h, mi/s, mi/h, kn)*/
 double get_convFactor_velocity(int unit_1_idx, int unit_2_idx);
 
+
+
 /*Conversion 6 : pi units (deg or rad)*/
 
 
 /*Conversion 7 : Angle units (rad, deg)*/
 double get_convFactor_angle(int unit_1_idx, int unit_2_idx);
 
-
-/*Conversion 8 : Temperature units (F , C , K ) */
+/*Conversion 8 : Temperature units (F , C , K ) - F: Fahrenheit, C: Celsius, K: Absolute temperature */
 void conv_temperature(int unit_1_idx, int unit_2_idx, int floatDigit, char *file_out);
 
 
@@ -127,6 +129,9 @@ void conv_temperature(int unit_1_idx, int unit_2_idx, int floatDigit, char *file
 /*Conversion 9: Volume (ml, cc, cm3, dl, l, m3, in3, ft3, yd3, gal, bbl, oz)*/
 double get_convFactor_volume_SI(int unit_1_idx, int unit_2_idx); //Volume SI
 double get_convFactor_volume_imperial(int unit_1_idx, int unit_2_idx); //Volume Imperial
+
+
+/*Conversion 10:  */
 
 
 

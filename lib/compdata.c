@@ -25,12 +25,12 @@ void computation(char *option, int floatDigit, char *file_out)
     //Parse each unit of convert from/to from option string 
     idx = parseToken(idx, option, suboption, '-');
         
-    //Computation 1: Compute mean
+    //Computation 1 : Compute mean of input data
     if( !(strcmp(suboption, "mean")) ) {
 	comp_mean(floatDigit, file_out);
     }
 
-    //Computation 2: Compute weighting of each value
+    //Computation 2 : Compute weighting of each value of input data
     else if( !(strcmp(suboption, "prob")) ) {
 	comp_prob(floatDigit, file_out);
     }
@@ -50,33 +50,36 @@ void computation(char *option, int floatDigit, char *file_out)
     }
 	
 	
-    //Computation 4: Data's Standard Deviation
+    //Computation 4 : Comute standard deviation of input data
     else if( !(strcmp(suboption, "stdde")) ) {
 	comp_stdde(floatDigit, file_out);
     }
 
-    //Computation 5: Data's Variance
+    //Computation 5 : Comute variance of input data
     else if( !(strcmp(suboption, "vari")) ) {
 	comp_vari(floatDigit, file_out);
     }
 
+
+    //Computation 6: 
     
     
 
     //....
 }
 
-//Computation 1 : Compute Mean
+//Computation 1 : Compute mean of input data
 void comp_mean(int floatDigit, char *file_out)
 {
-    int fd;           //File descriptor
-    int i = 0;        //Data Counter
-    char word[BUFLEN];//Data Buffer
-    double sum = 0, val, mean;
+    int fd;            //File descriptor
+    int i = 0;         //Data Counter
+    char word[BUFLEN]; //Data Buffer
+    double sum = 0, val, mean; // Random parameter
     
-    //1. open file to write
+    //1. Open file to write
     fd = newFile(file_out);
 
+    //2. Count and sum
     while(1) {
 	//Read word
 	if( readWord(word, STDIN_FILENO) == 0 )
@@ -92,41 +95,42 @@ void comp_mean(int floatDigit, char *file_out)
 	i = i + 1;
     }
 
-    //2. Compute mean and write to file
+    //3. Compute mean and write to file
     if (i != 0){
 	int n;
 
+	//Compute mean
 	mean = sum / i;
 	 
 	//Convert mean to string
 	fToStr(mean, floatDigit, word); 
 	 
-	//write mean to file
+	//Write mean to file
 	n = write(fd, word, strlen(word));
 
-	//Write error_1
+	//Write error_1 : Write error
 	if(n == -1) {
-	    perror("write error");
+	    perror("Write error\n");
 	    exit(errno);
 	}
     }
 
-    //3. error_2
+    //4. error_2 : Null data
     else if ( i == 0 ) {
-	perror("Null data");
+	perror("Null data\n");
 	exit(errno);
     }
 
     close(fd);
 }
 
-//Compute 2: Compute all data
+//Compute 2 : Compute weighting of each value of input data
 void comp_prob(int floatDigit, char *file_out)
 {
-    int fd, fd_tmp, n;
-    int i = 0;
-    double prob;
-    char word[BUFLEN];
+    int fd, fd_tmp, n; 	//File descriptor
+    int i = 0;		//Data Counter
+    double prob;	//Random parameter
+    char word[BUFLEN];	//Data Buffer
     
     //1. open file to write
     fd = newFile(file_out);
@@ -134,7 +138,7 @@ void comp_prob(int floatDigit, char *file_out)
     //2. open temporary file
     fd_tmp = newFile("tmp");
 
-    //3. Count data and Copy from std input stream  to temporary file
+    //3. Count data and Copy from std input stream to temporary file
     while(1) {
     
 	if( readWord(word, STDIN_FILENO) == 0 )
@@ -143,12 +147,17 @@ void comp_prob(int floatDigit, char *file_out)
 	strcat(word, " ");//Spacing each word
 	n = write(fd_tmp, word, strlen(word));
 
+	//Write error_1 : Write error
 	if(n == -1) {
-	    perror("write error");
+	    perror("Write error_1\n");
 	    exit(errno);
 	}
-	i = i + 1;	 
+
+	//Count
+	i = i + 1; 	 
     }
+
+    //When Input data exists
     if( i > 0) {
 	close(fd_tmp);
     }
@@ -174,15 +183,17 @@ void comp_prob(int floatDigit, char *file_out)
 	//Write to output file
 	n = write(fd, word, strlen(word));
 
-	//Write error
+	//Write error_2 : prob write error
 	if(n == -1) {
-	    perror("write error");
+	    perror("Write error_2\n");
 	    exit(errno);
 	}
     }
 
+    //close files
     close(fd);
     close(fd_tmp);
+
     //remove temporary file
     remove("tmp");
 }
@@ -324,6 +335,7 @@ void comp_hist(int distance, int floatDigit, char *file_out)
 	}
 	
 	free(hist);
+
 	//close files
 	close(fd);
 	close(fd_tmp);
@@ -336,15 +348,16 @@ void comp_hist(int distance, int floatDigit, char *file_out)
     return;    
 }
 
-//Computation 4: Standard deviation
+//Computation 4: Comute standard deviation of input data
 void comp_stdde(int floatDigit, char *file_out)
 {
 
-    int fd, fd_tmp, n;
-    int i = 0;
-    double stdde, prob ,prob_1, prob_2, sum_1=0, sum_2 = 0;
-    char word[BUFLEN];
+    int fd, fd_tmp, n;						//File descriptor
+    int i = 0;							//Data Counter
+    double stdde, prob ,prob_1, prob_2, sum_1=0, sum_2 = 0;	//Random parameter
+    char word[BUFLEN];						//Data Buffer
     
+
     //1. open file to write
     fd = newFile(file_out);
 
@@ -362,20 +375,26 @@ void comp_stdde(int floatDigit, char *file_out)
 	n = write(fd_tmp, word, strlen(word));
 
 
+	//Write error_1 : Write error
 	if(n == -1) {
-	    perror("write error");
+	    perror("Write error_1\n");
 	    exit(errno);
 	}
+
+	//Counte
 	i = i + 1;	 
     }
+
+    //When Input data exists
     if( i > 0) {
 	close(fd_tmp);
     }
 
 	
-    //4. Open tmporary1 file & Computation of total sum of each square.
+    //4. Open tmporary file & Computation of total sum of each square.
     fd_tmp = open("tmp", O_RDONLY);
 	
+    //When Input data exists
     while(i != 0) {
 
 	//read word
@@ -394,8 +413,10 @@ void comp_stdde(int floatDigit, char *file_out)
     }
 
 
+    //5. Compute standard deviation
     if(sum_1 >= 0 && sum_2 >= 0) {
 
+	//standard deviation formula
 	stdde = sqrt(sum_1 - (sum_2 * sum_2));
 
 
@@ -405,15 +426,15 @@ void comp_stdde(int floatDigit, char *file_out)
 	//Write to output file
 	n = write(fd, word, strlen(word));
 
-	//Write error
+	//Write error_2 : File Write error
 	if(n == -1) {
-	    perror("write fd error");
+	    perror("Write fd error_2\n");
 	    exit(errno);
 	}
     }
   
 
-
+    //close files
     close(fd);
     close(fd_tmp);
 
@@ -424,15 +445,17 @@ void comp_stdde(int floatDigit, char *file_out)
 
 
 
-//Computation 5: Variance
+//Computation 5: Comute variance of input data
 void comp_vari(int floatDigit, char *file_out)
 {
 
-    int fd, fd_tmp, n;
-    int i = 0;
-    double vari, prob , prob_1, prob_2, sum_1=0, sum_2 = 0;
-    char word[BUFLEN];
-    
+    int fd, fd_tmp, n;						//File descriptor
+    int i = 0;							//Data Counter
+    double vari, prob , prob_1, prob_2, sum_1=0, sum_2 = 0;	//Random parameter
+    char word[BUFLEN];						//Data Buffer
+
+
+
     //1. open file to write
     fd = newFile(file_out);
 
@@ -450,12 +473,17 @@ void comp_vari(int floatDigit, char *file_out)
 	n = write(fd_tmp, word, strlen(word));
 
 
+	//Write error_1 : Write error
 	if(n == -1) {
-	    perror("write error");
+	    perror("Write error_1\n");
 	    exit(errno);
 	}
+
+	//Count
 	i = i + 1;	 
     }
+
+    //When input data exists
     if( i > 0) {
 	close(fd_tmp);
     }
@@ -482,8 +510,10 @@ void comp_vari(int floatDigit, char *file_out)
     }
 
 
+    //5. Compute variance
     if(sum_1 >= 0 && sum_2 >= 0) {
 
+	//Variance formula
 	vari = sum_1 - (sum_2 * sum_2);
 
 
@@ -493,14 +523,15 @@ void comp_vari(int floatDigit, char *file_out)
 	//Write to output file
 	n = write(fd, word, strlen(word));
 
-	//Write error
+	//Write error_2 : File Write error
 	if(n == -1) {
-	    perror("write fd error");
+	    perror("Write fd error\n");
 	    exit(errno);
 	}
     }
   
 
+    //close files
     close(fd);
     close(fd_tmp);
 
@@ -508,5 +539,8 @@ void comp_vari(int floatDigit, char *file_out)
     remove("tem");
 }
 
+
+
+//Computation 6:
 
 

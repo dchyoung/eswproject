@@ -13,6 +13,7 @@
 #include "parser.h"
 #include "convdata.h"
 
+
 //Master function that calls corresponding data conversion function
 void conversion(char* option, int floatDigit, char* file_out)
 {
@@ -92,7 +93,7 @@ void conversion(char* option, int floatDigit, char* file_out)
     //Conversion 6 : pi(3.14) conversion
     else if( (unit_1_idx == _PI) )
     {
-	//
+	//Circle rate
 	double pi = 3.14;
 	//Get conversion scale factor for the units
 	convFactor = pi;
@@ -120,7 +121,7 @@ void conversion(char* option, int floatDigit, char* file_out)
     else if( (unit_1_idx >= F && unit_1_idx <= K) &&
 	(unit_2_idx >= F && unit_2_idx <= K) )
     {
-	//
+	//Convert input data
 	conv_temperature(unit_1_idx, unit_2_idx, floatDigit, file_out);
     }
 
@@ -233,6 +234,8 @@ void conversion(char* option, int floatDigit, char* file_out)
 
     //Conversion 10:
 
+
+
     //....
     else {
 	printf("Invalid Unit.\n");
@@ -241,6 +244,8 @@ void conversion(char* option, int floatDigit, char* file_out)
 }
 
 
+
+//Unit_
 int get_unit_idx(char* unit)
 {
     char* unit_table[NUM_OF_UNITS] = {
@@ -286,6 +291,8 @@ int get_unit_idx(char* unit)
     
 }
 
+
+//
 void _convert(double convFactor, int floatDigit, char* file_out)
 {
     int fd;
@@ -295,7 +302,7 @@ void _convert(double convFactor, int floatDigit, char* file_out)
     //1. open file to write
     fd = newFile(file_out);
 
-    //3. Read word by word, converting
+    //2. Read word by word, converting
     while(1) {
 	int n;
 	
@@ -837,27 +844,34 @@ double get_convFactor_velocity(int unit_1_idx, int unit_2_idx)
     
 }
 
-//Conversion function 6 : Angle conversion
+
+
+//Conversion function 6 : Circle rate conversion
+
+
+//Conversion function 7 : Angle conversion
 double get_convFactor_angle(int unit_1_idx, int unit_2_idx)
 {
 	double convFactor = 1;
 
-	// 1.
+	// 1. When you want to change Radian
 	if( unit_1_idx == RAD ) {
-		// 
+
+		//Conversion formula
 		convFactor = convFactor * (3.14/180);
     	}
 
-	// 2.
+	// 2. When you want to change Degree
 	else if( unit_1_idx == DEG ) {
-		//
+
+		//Conversion formula
 		convFactor = convFactor * (180/3.14);
 	}
 
-	// 3. error
-	else if ( unit_1_idx != DEG && unit_1_idx != RAD) {
+	// 3. Units error_1 : Wrong input error
+	else {
 		convFactor = convFactor * 1;
-		printf("input error\n");
+		printf("Wrong input error\n");
 	}
 
     return convFactor;
@@ -868,10 +882,11 @@ double get_convFactor_angle(int unit_1_idx, int unit_2_idx)
 //Conversion function 8 : Temperature conversion
 void conv_temperature(int unit_1_idx, int unit_2_idx, int floatDigit, char *file_out)
 {
-    int fd;
-    double temper;
-    char word[BUFLEN];
-    
+    int fd;		//File descriptor
+    double temper;	// Random parameter 
+    char word[BUFLEN];	//Data Buffer
+
+   
     //1. open file to write
     fd = newFile(file_out);
 
@@ -886,63 +901,75 @@ void conv_temperature(int unit_1_idx, int unit_2_idx, int floatDigit, char *file
 	//Convert string to float
 	temper = atof(word);
     
-	//
+	//1. When you want to change F
 	if(unit_1_idx == F){
 
-	   //
+	   //When you want to switch to C
 	   if(unit_2_idx == C){
+
+		//Conversion formula
 		temper = (temper - 32) / 1.8;
 	   }
 
-	   //
+	   //When you want to switch to K
 	   else if(unit_2_idx == K){
+
+		//Conversion formula
 		temper = ( (temper - 32) / 1.8 ) + 273.15;
 	   }
 
-	   // error
-	   else if (unit_2_idx != K && unit_2_idx != F && unit_2_idx != C){
+	   // Units error_1 : Wrong input error
+	   else {
 	   	temper = temper*1;
-		printf("input error\n");
+		printf("Wrong input error_1\n");
 	   }
 	}
 
-	//
+	//2. When you want to change C
 	else if(unit_1_idx == C){
 	
-	   //
+	   //When you want to switch to F
 	   if(unit_2_idx == F){
+
+		//Conversion formula
 		temper = (temper * 1.8) + 32;
 	   }
 
-	   //
+	   //When you want to switch to k
 	   else if(unit_2_idx == K){
+
+		//Conversion formula
 		temper = temper + 273.15;
 	   }
 
-	   // error
-	   else if (unit_2_idx != K && unit_2_idx != F && unit_2_idx != C){
+	   // Units error_2 : Wrong input error
+	   else {
 	   	temper = temper*1;
-		printf("input error\n");
+		printf("Wrong input error_2\n");
 	   }
 	}
 
-	//
+	//3. When you want to change K
 	else if(unit_1_idx == K){
 
-	   //
+	   //When you want to switch to F
 	   if(unit_2_idx == F){
+
+		//Conversion formula
 		temper = ( (temper - 273.15) * 1.8 ) + 32;
 	   }
 
-	   //
+	   //When you want to switch to C
 	   else if(unit_2_idx == C){
+
+		//Conversion formula
 		temper = temper - 273.15;
 	   }
 
-	   // error
-	   else if (unit_2_idx != K && unit_2_idx != F && unit_2_idx != C){
+	   // Units error_3 : Wrong input error
+	   else {
 	   	temper = temper*1;
-		printf("input error\n");
+		printf("Wrong input error_2\n");
 	   }
 	}
     
@@ -952,9 +979,9 @@ void conv_temperature(int unit_1_idx, int unit_2_idx, int floatDigit, char *file
 	//Write to outputfile
 	n = write(fd, word, strlen(word));
 
-	//write error
+	//Write error : Write error
 	if( n == -1 ) {
-	    perror("write\n");
+	    perror("write error\n");
 	    exit(errno);
 	}	
     }
@@ -1099,4 +1126,11 @@ double get_convFactor_volume_imperial(int unit_1_idx, int unit_2_idx)
 	}
     return convFactor;
 }
+
+
+
 //Conversion function 10:
+
+
+
+
