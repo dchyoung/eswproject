@@ -41,7 +41,6 @@ void computation(char *option, int floatDigit, char *file_out)
 	idx = parseToken(idx, option, suboption, '-');
 
 	if( idx > 4 ) {
-	    printf("suboption : %s, vlaue : %d\n", suboption, atoi(suboption));
 	    comp_hist(atoi(suboption), floatDigit, file_out);
 	}
 	else {
@@ -264,8 +263,9 @@ void comp_hist(int distance, int floatDigit, char *file_out)
 
 	if( n == 0) 
 	    n = 1;
-	
-	printf("n vlaue : %d\n", n );
+
+	printf("Max value: %f Min value: %f \n", max, min);
+	printf("The number of intervals : %d\n", n);
 	//Array allocation for counting table. index nth =  frequency of interval nth
 	hist = (int*)malloc(sizeof(int) * n); 
 
