@@ -14,12 +14,13 @@
 #include "convdata.h"
 
 
+
 //Master function that calls corresponding data conversion function
 void conversion(char* option, int floatDigit, char* file_out)
 {
     int idx = 0, unit_1_idx, unit_2_idx;
-    char unit_1[5];
-    char unit_2[5];
+    char unit_1[10];
+    char unit_2[10];
     double convFactor;
     
     //Parse each unit of convert from/to from option string
@@ -27,7 +28,13 @@ void conversion(char* option, int floatDigit, char* file_out)
     idx = parseToken(idx, option, unit_1, '-');
     parseToken(idx, option, unit_2, '-');
 
+    //##Test 
+printf("%s\n", unit_1);
+    if( !(strcmp(unit_1, "test")) ) {
 
+	_test(unit_2);
+	return;
+    }
 
     //Convert unit string to corresponding unit index
     unit_1_idx = get_unit_idx(unit_1);
@@ -1129,8 +1136,81 @@ double get_convFactor_volume_imperial(int unit_1_idx, int unit_2_idx)
 
 
 
-//Conversion function 10:
+void _test(char* testNo)
+{
+    int unit_1_idx, unit_2_idx;
+    double convFactor;
+    
+    //TEST CONVERSION 1
+	if( !(strcmp(testNo, "1")) ) {
+	    for(unit_1_idx = MCG; unit_1_idx <= OZ; unit_1_idx++) {
+		for(unit_2_idx = MCG; unit_2_idx <= OZ; unit_2_idx++){
+		    convFactor = get_convFactor_mass(unit_1_idx, unit_2_idx);
+		    printf("Conversion factor from %d to %d: %.39f\n", unit_1_idx, unit_2_idx, convFactor);
+		}
+	    }
+	}
 
+	//TEST CONVERSION 2
+	else if( !(strcmp(testNo, "2")) ) {
+	    for(unit_1_idx = ATTO; unit_1_idx <= EXA; unit_1_idx++) {
+		for(unit_2_idx = ATTO; unit_2_idx <= EXA; unit_2_idx++){
+		    convFactor = get_convFactor_metric(unit_1_idx, unit_2_idx);
+		    printf("Conversion factor from %d to %d: %.39f\n", unit_1_idx, unit_2_idx, convFactor);
+		}
+	    }
+	}
+
+	//TEST CONVERSION 3
+	else if( !(strcmp(testNo, "3")) ) {
+	    for(unit_1_idx = MM; unit_1_idx <= MILE; unit_1_idx++) {
+		for(unit_2_idx = MM; unit_2_idx <= MILE; unit_2_idx++){
+		    convFactor = get_convFactor_length(unit_1_idx, unit_2_idx);
+		    printf("Conversion factor from %d to %d: %.39f\n", unit_1_idx, unit_2_idx, convFactor);
+		}
+	    }
+	}
+
+	//TEST CONVERSION 4
+	else if( !(strcmp(testNo, "4")) ) {
+	    for(unit_1_idx = SEC; unit_1_idx <= HR; unit_1_idx++) {
+		for(unit_2_idx = SEC; unit_2_idx <= HR; unit_2_idx++){
+		    convFactor = get_convFactor_time(unit_1_idx, unit_2_idx);
+		    printf("Conversion factor from %d to %d: %.39f\n", unit_1_idx, unit_2_idx, convFactor);
+		}
+	    }
+	}
+
+	//TEST CONVERSION 5
+	else if( !(strcmp(testNo, "5")) ) {
+	    for(unit_1_idx = M_S; unit_1_idx <= KN; unit_1_idx++) {
+		for(unit_2_idx = MM; unit_2_idx <= MILE; unit_2_idx++){
+		    convFactor = get_convFactor_velocity(unit_1_idx, unit_2_idx);
+		    printf("Conversion factor from %d to %d: %.39f\n", unit_1_idx, unit_2_idx, convFactor);
+		}
+	    }
+	}
+
+	//TEST CONVERSION 9
+	else if( !(strcmp(testNo, "9")) ) {
+	    for(unit_1_idx = ML; unit_1_idx <= M3; unit_1_idx++) {
+		for(unit_2_idx = ML; unit_2_idx <= M3; unit_2_idx++){
+		    convFactor = get_convFactor_volume_SI(unit_1_idx, unit_2_idx);
+		    printf("Conversion factor from %d to %d: %.39f\n", unit_1_idx, unit_2_idx, convFactor);
+		}
+	    }
+
+	    for(unit_1_idx = IN3; unit_1_idx <= YD3; unit_1_idx++) {
+		for(unit_2_idx = IN3; unit_2_idx <= YD3; unit_2_idx++){
+		    convFactor = get_convFactor_volume_imperial(unit_1_idx, unit_2_idx);
+		    printf("Conversion factor from %d to %d: %.19f\n", unit_1_idx, unit_2_idx, convFactor);
+		}
+	    }
+	}
+
+        
+	
+}
 
 
 
