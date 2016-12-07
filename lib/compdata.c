@@ -315,7 +315,7 @@ void comp_hist(int distance, int floatDigit, char *file_out)
 	    }
 
 	    //Interval to:
-	    value = min * distance * (idx + 1);
+	    value = value + distance;
 	    fToStr(value, floatDigit, word);
 	    strcat(word, " : ");
 	    
