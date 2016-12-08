@@ -25,6 +25,8 @@ Command Format:
 - Number of floating point digit set 2 as defaul
 
 cat dataFile | ./datamaster (1stOption) (2ndOption) (NumberOfFloatingPointDigits) (outputFileName) 
+
 cat dataFile | ./datamaster -conv km/s-mi/s outputFile
+
 cat dataFile | ./datamaster -comp mean outputFile
 
