@@ -24,9 +24,14 @@ Supported Functions:
 Command Format:
 - Number of floating point digit set 2 as defaul
 
+#Example
 cat dataFile | ./datamaster (1stOption) (2ndOption) (NumberOfFloatingPointDigits) (outputFileName) 
 
+#Convert km/s to mi/s
 cat dataFile | ./datamaster -conv km/s-mi/s outputFile
 
+#Compute mean value
 cat dataFile | ./datamaster -comp mean outputFile
 
+#Conversion test mode 
+./datamaster -conv test-n outputFile  #n: Conversion number to test
